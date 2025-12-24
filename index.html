@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>KokoriConnect - VF</title>
     
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="KokoriConnect">
+    
+    <link rel="apple-touch-icon" href="https://pitchoune-6.github.io/Poulailler-connect-/logo.png">
+    <link rel="icon" href="https://pitchoune-6.github.io/Poulailler-connect-/logo.png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -84,7 +90,7 @@
     </div>
 
     <div class="header">
-        <img src="logo.png" alt="Logo" class="mon-logo">
+        <img src="https://pitchoune-6.github.io/Poulailler-connect-/logo.png" alt="Logo" class="mon-logo">
         <div class="weather-widget">
             <span id="weather-icon">🌍</span> 
             <div>
@@ -332,4 +338,5 @@
         setInterval(()=>{if(Date.now()-lastMsg>35000)updateStatus(false);},5000);
     </script>
 </body>
+
 </html>
