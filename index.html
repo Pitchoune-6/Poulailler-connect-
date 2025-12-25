@@ -9,8 +9,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="KokoriConnect">
     
-    <link rel="apple-touch-icon" href="https://pitchoune-6.github.io/Poulailler-connect-/accueil.PNG?v=FixSize1">
-    <link rel="icon" href="https://pitchoune-6.github.io/Poulailler-connect-/accueil.PNG?v=FixSize1">
+    <link rel="apple-touch-icon" href="https://pitchoune-6.github.io/Poulailler-connect-/accueil.PNG?v=BigIcons">
+    <link rel="icon" href="https://pitchoune-6.github.io/Poulailler-connect-/accueil.PNG?v=BigIcons">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -22,7 +22,7 @@
             font-family: 'Segoe UI', Tahoma, sans-serif;
             background: linear-gradient(to bottom, #ffffff, var(--primary));
             min-height: 100vh; margin: 0; padding: 0; color: #333; text-align: center;
-            /* Espace ajusté pour la nouvelle taille du menu */
+            /* Espace suffisant pour ne pas cacher le contenu derrière le nouveau menu */
             padding-bottom: 130px; 
         }
 
@@ -69,7 +69,7 @@
         .btn-export { background: var(--dark); margin-top: 15px; }
         .status-label { font-weight: bold; padding: 2px 8px; border-radius: 5px; background: #f0f0f0; }
 
-        /* --- MENU DU BAS OPTIMISÉ --- */
+        /* --- MENU DU BAS : RETOUR A L'ANCIENNE DISPO + GRANDES IMAGES --- */
         .bottom-nav { 
             position: fixed; 
             bottom: 0; 
@@ -77,13 +77,11 @@
             width: 100%; 
             background: white; 
             display: flex; 
-            justify-content: space-around;
-            /* Padding réduit en haut et bas */
-            padding: 5px 0; 
+            justify-content: space-around; /* Espacement égal */
+            padding: 10px 0;
             box-shadow: 0 -2px 20px rgba(0,0,0,0.1); 
             z-index: 1000; 
-            /* Hauteur fixe pour éviter que ça devienne "trop gros" */
-            height: 110px;
+            height: 110px; /* Hauteur fixe raisonnable */
             padding-bottom: env(safe-area-inset-bottom);
         }
         
@@ -93,22 +91,22 @@
             color: #999; 
             font-size: 0.9em; 
             display: flex; 
-            flex-direction: column; 
+            flex-direction: column; /* Image au-dessus du texte */
             align-items: center; 
             justify-content: center;
             cursor: pointer; 
-            flex: 1; /* Prend l'espace disponible équitablement */
-            padding: 0;
+            flex: 1; /* Prend tout l'espace */
+            gap: 5px;
         }
         
-        /* FORCE L'IMAGE A ETRE GRANDE (80px) ET NE PAS RETRECIR */
+        /* FORCE L'IMAGE A ETRE TRES GRANDE (80px) */
         .nav-item img {
-            width: 80px !important;
-            height: 80px !important;
-            min-width: 80px !important; /* Sécurité anti-écrasement */
-            min-height: 80px !important;
+            width: 150px !important;
+            height: 150px !important;
+            min-width: 150px !important;
+            min-height: 150px !important;
+            flex-shrink: 0 !important;
             display: block;
-            margin-bottom: 2px; /* Marge réduite */
             filter: grayscale(100%) opacity(0.6);
             transition: 0.3s;
             object-fit: contain;
@@ -137,7 +135,7 @@
     </div>
 
     <div class="header">
-        <img src="https://pitchoune-6.github.io/Poulailler-connect-/logo.png?v=FixSize1" alt="Logo" class="mon-logo">
+        <img src="https://pitchoune-6.github.io/Poulailler-connect-/logo.png?v=BigIcons" alt="Logo" class="mon-logo">
         <div class="weather-widget">
             <span id="weather-icon">🌍</span> 
             <div>
@@ -238,19 +236,19 @@
 
     <div class="bottom-nav">
         <button class="nav-item active" onclick="switchTab('home', this)">
-            <img src="https://pitchoune-6.github.io/Poulailler-connect-/home.png?v=FixSize1" alt="Accueil">
+            <img src="https://pitchoune-6.github.io/Poulailler-connect-/home.png?v=BigIcons" alt="Accueil">
             <span>Accueil</span>
         </button>
         <button class="nav-item" onclick="switchTab('stats', this)">
-            <img src="https://pitchoune-6.github.io/Poulailler-connect-/stats.png?v=FixSize1" alt="Stats">
+            <img src="https://pitchoune-6.github.io/Poulailler-connect-/stats.png?v=BigIcons" alt="Stats">
             <span>Stats</span>
         </button>
         <button class="nav-item" onclick="switchTab('actions', this)">
-            <img src="https://pitchoune-6.github.io/Poulailler-connect-/action.png?v=FixSize1" alt="Actions">
+            <img src="https://pitchoune-6.github.io/Poulailler-connect-/action.png?v=BigIcons" alt="Actions">
             <span>Actions</span>
         </button>
         <button class="nav-item" onclick="switchTab('settings', this)">
-            <img src="https://pitchoune-6.github.io/Poulailler-connect-/reglages.png?v=FixSize1" alt="Réglages">
+            <img src="https://pitchoune-6.github.io/Poulailler-connect-/reglages.png?v=BigIcons" alt="Réglages">
             <span>Réglages</span>
         </button>
     </div>
