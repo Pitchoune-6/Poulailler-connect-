@@ -9,11 +9,12 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="KokoriConnect">
     
-    <link rel="apple-touch-icon" href="https://pitchoune-6.github.io/Poulailler-connect-/accueil.PNG?v=Details">
-    <link rel="icon" href="https://pitchoune-6.github.io/Poulailler-connect-/accueil.PNG?v=Details">
+    <link rel="apple-touch-icon" href="https://pitchoune-6.github.io/Poulailler-connect-/accueil.PNG?v=ProIcons">
+    <link rel="icon" href="https://pitchoune-6.github.io/Poulailler-connect-/accueil.PNG?v=ProIcons">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root { --primary: #4e23af; --danger: #e74c3c; --success: #2ecc71; --warning: #f1c40f; --info: #3498db; --dark: #2c3e50; }
@@ -68,7 +69,7 @@
         .btn-export { background: var(--dark); margin-top: 15px; }
         .status-label { font-weight: bold; padding: 2px 8px; border-radius: 5px; background: #f0f0f0; }
 
-        /* --- NAVIGATION EMOJI --- */
+        /* --- NAVIGATION PRO (FontAwesome) --- */
         .bottom-nav { 
             position: fixed; 
             bottom: 0; 
@@ -77,7 +78,7 @@
             background: white; 
             display: flex; 
             justify-content: space-around; 
-            padding: 10px 0 20px 0; 
+            padding: 12px 0 25px 0; /* Un peu plus d'espace */
             box-shadow: 0 -2px 20px rgba(0,0,0,0.1); 
             z-index: 1000; 
             padding-bottom: env(safe-area-inset-bottom);
@@ -86,38 +87,35 @@
         .nav-item { 
             background: none; 
             border: none; 
-            font-size: 0.9em; /* Texte un peu plus gros */
+            font-size: 0.85em; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             cursor: pointer; 
             flex: 1; 
             transition: 0.3s;
-            color: #300a6e; /* Texte Violet Foncé par défaut */
+            color: #300a6e; /* VIOLET FONCÉ par défaut */
+            opacity: 0.6; /* Un peu grisé par défaut */
         }
         
-        /* Style des Emojis */
+        /* Style de l'icône */
         .nav-icon { 
-            font-size: 38px; /* Emoji bien visible */
-            margin-bottom: 2px;
-            /* ASTUCE : On le met en noir et blanc par défaut pour voir les détails mais en gris */
-            filter: grayscale(100%) opacity(0.6); 
+            font-size: 28px; /* Taille propre et nette */
+            margin-bottom: 4px;
             transition: 0.3s;
         }
 
-        /* Quand l'onglet est ACTIF */
-        .nav-item.active .nav-icon { 
-            /* On remet les vraies couleurs de l'emoji */
-            filter: grayscale(0%) opacity(1);
-            transform: scale(1.25); /* Effet de zoom */
-        }
-        
-        /* Texte plus clair quand actif */
+        /* ETAT ACTIF (QUAND ON CLIQUE) */
         .nav-item.active { 
-            color: #9b59b6; /* Violet plus clair */
+            color: #a569bd; /* VIOLET CLAIR */
+            opacity: 1; /* Pleine visibilité */
             font-weight: bold; 
         }
 
+        .nav-item.active .nav-icon { 
+            transform: scale(1.25); /* Grossit de 25% */
+        }
+        
         /* MODAL */
         .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
         .modal-content { background: white; margin: 20% auto; padding: 30px; border-radius: 20px; width: 85%; max-width: 400px; text-align: center; }
@@ -235,19 +233,19 @@
 
     <div class="bottom-nav">
         <button class="nav-item active" onclick="switchTab('home', this)">
-            <span class="nav-icon">🏠</span>
+            <i class="nav-icon fas fa-home"></i>
             <span>Accueil</span>
         </button>
         <button class="nav-item" onclick="switchTab('stats', this)">
-            <span class="nav-icon">📊</span>
+            <i class="nav-icon fas fa-chart-bar"></i>
             <span>Stats</span>
         </button>
         <button class="nav-item" onclick="switchTab('actions', this)">
-            <span class="nav-icon">🎮</span>
+            <i class="nav-icon fas fa-gamepad"></i>
             <span>Actions</span>
         </button>
         <button class="nav-item" onclick="switchTab('settings', this)">
-            <span class="nav-icon">⚙️</span>
+            <i class="nav-icon fas fa-cog"></i>
             <span>Réglages</span>
         </button>
     </div>
@@ -262,7 +260,9 @@
         }
 
         // --- CONFIG & GLOBALES ---
-        const broker = "mqtt.dev.icam.school"; const port = 443; const rootTopic = "bzh/mecatro/dashboard/Kokoriconnect/";
+        const broker = "mqtt.dev.icam.school"; 
+        const port = 443; 
+        const rootTopic = "bzh/mecatro/dashboard/Kokoriconnect/";
         let userLat = 47.658; let userLon = -2.760; // Valeurs par défaut
         let lastMsg = Date.now(); let history = []; let client = null;
 
@@ -293,6 +293,18 @@
                 history.push({h,t,p});
             };
             client.connect({ onSuccess:()=>{updateStatus(true); client.subscribe(rootTopic+"#");}, useSSL:true });
+        }
+
+        // --- TOOLS ---
+        function sendCommand(t, m) { 
+            if(client && client.isConnected()){ 
+                let msg = new Paho.MQTT.Message(m); 
+                msg.destinationName = rootTopic + t; 
+                client.send(msg); 
+                console.log("Envoi MQTT : " + msg.destinationName + " -> " + m);
+            } else {
+                alert("Erreur : Non connecté au MQTT");
+            }
         }
 
         // --- GESTION DES PARAMÈTRES (AVEC NOM) ---
@@ -336,9 +348,9 @@
             localStorage.setItem('userClose', closeT);
 
             initWeather();
-            sendCommand(rootTopic + "Config/Mode", mode);
-            sendCommand(rootTopic + "Config/HeureOuv", openT);
-            sendCommand(rootTopic + "Config/HeureFerm", closeT);
+            sendCommand("Config/Mode", mode);
+            sendCommand("Config/HeureOuv", openT);
+            sendCommand("Config/HeureFerm", closeT);
 
             alert("Paramètres sauvegardés avec succès !");
         }
@@ -365,8 +377,6 @@
         }
         function getWI(c){if(c===0)return"☀️";if(c<4)return"☁️";if(c<50)return"🌫️";if(c<70)return"🌧️";return"🌤️";}
 
-        // --- TOOLS ---
-        function sendCommand(t, m) { if(client&&client.isConnected()){ let msg=new Paho.MQTT.Message(m); msg.destinationName=t; client.send(msg); } }
         function alertModal(t, m) { document.getElementById("modal-title").innerText=t; document.getElementById("modal-msg").innerText=m; document.getElementById("modal-alerte").style.display="block"; }
         function closeModal() { document.getElementById("modal-alerte").style.display="none"; }
         function upC(c,l,d,i=0) { c.data.labels.push(l); c.data.datasets[i].data.push(d); if(c.data.labels.length>10){c.data.labels.shift();c.data.datasets[i].data.shift();} c.update(); }
