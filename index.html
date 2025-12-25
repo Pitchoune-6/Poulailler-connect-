@@ -50,34 +50,22 @@
         .level-fill { height: 100%; width: 0%; transition: 1s ease-in-out; }
         .chart-container { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); height: 250px; margin-bottom: 20px; }
         
-        /* RESTAURATION DU STYLE EXACT DES ACTIONS */
+        /* ACTIONS */
         .control-panel { background: white; border-radius: 20px; padding: 25px; max-width: 600px; margin: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: left; }
         .control-panel h3 { margin-top: 0; margin-bottom: 15px; color: var(--dark); font-size: 1.1em; border-bottom: none; }
         
-        /* Badge d'état (Le fameux "--" gris à droite) */
+        /* Badge d'état (Style Pillule grise à droite) */
         .status-label { 
-            float: right;
-            font-weight: bold; 
-            padding: 4px 12px; 
-            border-radius: 6px; 
-            background: #f0f0f0; 
-            color: #555;
-            font-size: 0.9em;
+            float: right; font-weight: bold; padding: 4px 12px; border-radius: 10px; 
+            background: #f0f0f0; color: #555; font-size: 0.85em; min-width: 80px; text-align: center;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        /* BOUTONS (Style d'origine) */
+        /* BOUTONS ACTIONS */
         .btn { 
-            padding: 15px 0; 
-            border: none; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            color: white; 
-            font-weight: bold; 
-            font-size: 1em;
-            transition: 0.2s; 
-            box-shadow: 0 4px 0 rgba(0,0,0,0.1); 
-            width: 100%; 
-            margin-bottom: 10px;
+            padding: 15px 0; border: none; border-radius: 8px; cursor: pointer; color: white; 
+            font-weight: bold; font-size: 1em; transition: 0.2s; box-shadow: 0 4px 0 rgba(0,0,0,0.1); 
+            width: 100%; margin-bottom: 10px;
         }
         .btn:active { transform: translateY(3px); box-shadow: none; }
         
@@ -95,7 +83,7 @@
         .form-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1em; box-sizing: border-box; }
         .form-select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1em; background: white; }
 
-        /* NAVIGATION BAS (FontAwesome - Propre) */
+        /* NAVIGATION BAS (FontAwesome) */
         .bottom-nav { 
             position: fixed; bottom: 0; left: 0; width: 100%; background: white; 
             display: flex; justify-content: space-around; padding: 12px 0 25px 0; 
@@ -244,7 +232,6 @@
     </div>
 
     <script>
-        // --- NAVIGATION ---
         function switchTab(id, btn) {
             document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
@@ -252,23 +239,22 @@
             btn.classList.add('active');
         }
 
-        // --- CONFIG & GLOBALES ---
         const broker = "mqtt.dev.icam.school"; const port = 443; const rootTopic = "bzh/mecatro/dashboard/Kokoriconnect/";
-        let userLat = 47.658; let userLon = -2.760; // Valeurs par défaut
+        let userLat = 47.658; let userLon = -2.760; 
         let lastMsg = Date.now(); let history = []; let client = null;
 
-        // --- CHARTS ---
         const cOpt = { responsive:true, maintainAspectRatio:false };
         const tChart = new Chart(document.getElementById('tempChart'),{type:'line',data:{labels:[],datasets:[{label:'Temp. (°C)',data:[],borderColor:'#e74c3c',fill:true,backgroundColor:'rgba(231,76,60,0.1)',tension:0.4}]},options:cOpt});
         const eChart = new Chart(document.getElementById('eggChart'),{type:'bar',data:{labels:[],datasets:[{label:'Œufs',data:[],backgroundColor:'#f1c40f'}]},options:{...cOpt,scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}});
         const lChart = new Chart(document.getElementById('levelChart'),{type:'line',data:{labels:[],datasets:[{label:'Eau %',data:[],borderColor:'#3498db'},{label:'Grain %',data:[],borderColor:'#f1c40f'}]},options:cOpt});
 
-        // --- MQTT ---
         function startMQTT() {
             client = new Paho.MQTT.Client(broker, port, "app_" + Math.random().toString(16).substr(2, 6));
             client.onConnectionLost = () => updateStatus(false);
             client.onMessageArrived = (msg) => {
-                const t = msg.destinationName.toLowerCase(); const p = msg.payloadString.trim();
+                const t = msg.destinationName.toLowerCase(); 
+                const p = msg.payloadString.trim();
+                const raw = p.toLowerCase(); // Version minuscule pour analyse
                 const h = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
                 lastMsg = Date.now(); updateStatus(true);
 
@@ -276,17 +262,54 @@
                 if(t.includes("humidite")) document.getElementById("hum").innerText=p;
                 if(t.includes("luminosite")) document.getElementById("lux").innerText=p;
                 if(t.includes("nboeufs")) { document.getElementById("oeufs").innerText=p; upC(eChart,h,parseInt(p)); }
+                
+                // --- LOGIQUE CORRIGÉE ET COMPLÈTE POUR LA PORTE ---
+                if(t.includes("porte")) { 
+                    const el = document.getElementById("etat-porte"); 
+                    // 1. Détection Mouvement (Orange)
+                    if(raw.includes("mouv") || raw.includes("moving")) {
+                        el.innerText = "EN MOUVEMENT";
+                        el.style.color = "#f39c12"; // Orange
+                        el.style.backgroundColor = "rgba(243, 156, 18, 0.1)";
+                    } 
+                    // 2. Détection Ouverte (Vert)
+                    else if(raw.includes("ouv") || raw.includes("open") || raw == "1") {
+                        el.innerText = "OUVERTE";
+                        el.style.color = "#2ecc71"; // Vert
+                        el.style.backgroundColor = "rgba(46, 204, 113, 0.1)";
+                    } 
+                    // 3. Sinon : Fermée (Rouge)
+                    else {
+                        el.innerText = "FERMÉE";
+                        el.style.color = "#e74c3c"; // Rouge
+                        el.style.backgroundColor = "rgba(231, 76, 60, 0.1)";
+                    }
+                }
+
+                // --- LOGIQUE CORRIGÉE POUR LE RACLEUR ---
+                if(t.includes("racleur")) { 
+                    const el = document.getElementById("etat-racleur"); 
+                    // Si "fonctionnement", "run", "marche" -> Bleu
+                    if(raw.includes("fonction") || raw.includes("run") || raw.includes("marche") || raw == "1") {
+                        el.innerText = "EN FONCTIONNEMENT";
+                        el.style.color = "#3498db"; // Bleu
+                        el.style.backgroundColor = "rgba(52, 152, 219, 0.1)";
+                    } else {
+                        el.innerText = "À L'ARRÊT";
+                        el.style.color = "#555"; // Gris
+                        el.style.backgroundColor = "#ddd";
+                    }
+                }
+
                 if(t.includes("niveaueau")) { const v=parseInt(p); document.getElementById("val-eau").innerText=v+"%"; document.getElementById("fill-eau").style.width=v+"%"; upC(lChart,h,v,0); if(v<10) alertModal("EAU BASSE", v+"% restants !"); }
                 if(t.includes("niveaugrain")) { const v=parseInt(p); document.getElementById("val-grain").innerText=v+"%"; document.getElementById("fill-grain").style.width=v+"%"; upC(lChart,h,v,1); if(v<10) alertModal("GRAIN BAS", v+"% restants !"); }
-                if(t.includes("porte")) { const el=document.getElementById("etat-porte"); el.innerText=p.toUpperCase(); el.style.color=p.includes("ouverte")?"green":"red"; }
-                if(t.includes("racleur")) { const el=document.getElementById("etat-racleur"); el.innerText=p.toUpperCase(); el.style.color=p.includes("fonctionnement")?"#3498db":"#333"; }
                 if(t.includes("etatstock") && p.toUpperCase().includes("PLEIN")) alertModal("BLOCAGE", "Stock plein ou œuf coincé !");
+                
                 history.push({h,t,p});
             };
             client.connect({ onSuccess:()=>{updateStatus(true); client.subscribe(rootTopic+"#");}, useSSL:true });
         }
 
-        // --- TOOLS ---
         function sendCommand(t, m) { 
             if(client && client.isConnected()){ 
                 let msg = new Paho.MQTT.Message(m); 
