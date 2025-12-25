@@ -9,8 +9,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="KokoriConnect">
     
-    <link rel="apple-touch-icon" href="https://pitchoune-6.github.io/Poulailler-connect-/Accueil.PNG">
-    <link rel="icon" href="https://pitchoune-6.github.io/Poulailler-connect-/Accueil.PNG">
+    <link rel="apple-touch-icon" href="https://pitchoune-6.github.io/Poulailler-connect-/accueil.PNG">
+    <link rel="icon" href="https://pitchoune-6.github.io/Poulailler-connect-/accueil.PNG">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -68,7 +68,7 @@
         .btn-export { background: var(--dark); margin-top: 15px; }
         .status-label { font-weight: bold; padding: 2px 8px; border-radius: 5px; background: #f0f0f0; }
 
-        /* NAV BAS */
+        /* NAV BAS (Modifiée pour les images) */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 20px rgba(0,0,0,0.1); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
         
         .nav-item { background: none; border: none; color: #999; font-size: 0.8em; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; flex: 1; }
@@ -205,7 +205,7 @@
 
     <div class="bottom-nav">
         <button class="nav-item active" onclick="switchTab('home', this)">
-            <span class="nav-icon"><img src="Home.png" alt="Accueil"></span>
+            <span class="nav-icon"><img src="home.png" alt="Accueil"></span>
             <span>Accueil</span>
         </button>
         <button class="nav-item" onclick="switchTab('stats', this)">
@@ -213,7 +213,7 @@
             <span>Stats</span>
         </button>
         <button class="nav-item" onclick="switchTab('actions', this)">
-            <span class="nav-icon"><img src="Manette.png" alt="Actions"></span>
+            <span class="nav-icon"><img src="manette.png" alt="Actions"></span>
             <span>Actions</span>
         </button>
         <button class="nav-item" onclick="switchTab('settings', this)">
