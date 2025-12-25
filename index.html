@@ -22,7 +22,8 @@
             font-family: 'Segoe UI', Tahoma, sans-serif;
             background: linear-gradient(to bottom, #ffffff, var(--primary));
             min-height: 100vh; margin: 0; padding: 0; color: #333; text-align: center;
-            padding-bottom: 90px;
+            /* J'ai augmenté la marge en bas à 160px pour laisser la place aux icônes géantes */
+            padding-bottom: 160px; 
         }
 
         /* HEADER */
@@ -68,22 +69,23 @@
         .btn-export { background: var(--dark); margin-top: 15px; }
         .status-label { font-weight: bold; padding: 2px 8px; border-radius: 5px; background: #f0f0f0; }
 
-        /* NAV BAS (Modifiée pour les images) */
+        /* NAV BAS (ICÔNES GÉANTES X4) */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 20px rgba(0,0,0,0.1); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
         
         .nav-item { background: none; border: none; color: #999; font-size: 0.8em; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; flex: 1; }
         
         .nav-icon img {
-            width: 24px;
-            height: 24px;
+            width: 96px;  /* MODIFIÉ ICI : 24px * 4 = 96px */
+            height: 96px; /* MODIFIÉ ICI : 24px * 4 = 96px */
             object-fit: contain;
             filter: grayscale(100%) opacity(0.6);
             transition: 0.3s;
+            margin-bottom: 5px;
         }
 
         .nav-item.active .nav-icon img {
             filter: none;
-            transform: scale(1.1);
+            transform: scale(1.05); /* Effet zoom léger */
         }
         
         .nav-item.active { color: var(--primary); font-weight: bold; }
@@ -265,7 +267,7 @@
             client.connect({ onSuccess:()=>{updateStatus(true); client.subscribe(rootTopic+"#");}, useSSL:true });
         }
 
-        // --- GESTION DES PARAMÈTRES ---
+        // --- GESTION DES PARAMÈTRES (AVEC NOM) ---
         function loadSettings() {
             const savedName = localStorage.getItem('appName');
             if(savedName) {
