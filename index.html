@@ -9,8 +9,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="KokoriConnect">
     
-    <link rel="apple-touch-icon" href="https://pitchoune-6.github.io/Poulailler-connect-/accueil.PNG?v=EmoColor">
-    <link rel="icon" href="https://pitchoune-6.github.io/Poulailler-connect-/accueil.PNG?v=EmoColor">
+    <link rel="apple-touch-icon" href="https://pitchoune-6.github.io/Poulailler-connect-/accueil.PNG?v=Details">
+    <link rel="icon" href="https://pitchoune-6.github.io/Poulailler-connect-/accueil.PNG?v=Details">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -86,33 +86,35 @@
         .nav-item { 
             background: none; 
             border: none; 
-            font-size: 0.85em; 
+            font-size: 0.9em; /* Texte un peu plus gros */
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             cursor: pointer; 
             flex: 1; 
             transition: 0.3s;
-            color: #300a6e; /* Texte Violet foncé par défaut */
+            color: #300a6e; /* Texte Violet Foncé par défaut */
         }
         
-        /* Style des Emojis avec ASTUCE COLORISATION */
+        /* Style des Emojis */
         .nav-icon { 
-            font-size: 35px; 
+            font-size: 38px; /* Emoji bien visible */
             margin-bottom: 2px;
+            /* ASTUCE : On le met en noir et blanc par défaut pour voir les détails mais en gris */
+            filter: grayscale(100%) opacity(0.6); 
             transition: 0.3s;
-            color: transparent;  /* On cache la couleur originale de l'emoji */
-            text-shadow: 0 0 0 #300a6e; /* On le "teint" en Violet Foncé */
         }
 
         /* Quand l'onglet est ACTIF */
         .nav-item.active .nav-icon { 
-            text-shadow: 0 0 0 #a569bd; /* Devient Violet Clair */
-            transform: scale(1.3); /* Grossit */
+            /* On remet les vraies couleurs de l'emoji */
+            filter: grayscale(0%) opacity(1);
+            transform: scale(1.25); /* Effet de zoom */
         }
         
+        /* Texte plus clair quand actif */
         .nav-item.active { 
-            color: #a569bd; /* Texte Violet Clair */
+            color: #9b59b6; /* Violet plus clair */
             font-weight: bold; 
         }
 
