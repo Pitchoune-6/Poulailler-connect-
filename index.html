@@ -9,8 +9,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="KokoriConnect">
     
-    <link rel="apple-touch-icon" href="accueil.PNG">
-    <link rel="icon" type="image/png" href="accueil.PNG">
+    <link rel="apple-touch-icon" href="https://pitchoune-6.github.io/Poulailler-connect-/accueil.png?v=FinalFix2">
+    <link rel="icon" type="image/png" href="https://pitchoune-6.github.io/Poulailler-connect-/accueil.png?v=FinalFix2">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -50,30 +50,62 @@
         .level-fill { height: 100%; width: 0%; transition: 1s ease-in-out; }
         .chart-container { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); height: 250px; margin-bottom: 20px; }
         
-        /* ACTIONS */
-        .control-panel { background: white; border-radius: 20px; padding: 25px; max-width: 600px; margin: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: left; }
-        .control-panel h3 { margin-top: 0; margin-bottom: 15px; color: var(--dark); font-size: 1.1em; border-bottom: none; }
+        /* RESTAURATION DU STYLE DES ACTIONS */
+        .control-panel { 
+            background: white; border-radius: 20px; padding: 25px; max-width: 600px; margin: auto; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: left; 
+        }
         
-        /* Badge d'état (Style Pillule grise à droite) */
-        .status-label { 
-            float: right; font-weight: bold; padding: 4px 12px; border-radius: 10px; 
-            background: #f0f0f0; color: #555; font-size: 0.85em; min-width: 80px; text-align: center;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        /* Style du titre de section (Porte / Maintenance) */
+        .section-header {
+            display: flex;
+            justify-content: space-between; /* Titre à gauche, état à droite */
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .section-header h3 {
+            margin: 0;
+            font-size: 1.2em;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        /* BOUTONS ACTIONS */
+        /* Badge d'état (Le petit carré gris) */
+        .status-box {
+            background: #eee;
+            color: #555;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.9em;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        /* GROS BOUTONS COLORÉS */
+        .btn-group { display: flex; gap: 10px; width: 100%; }
         .btn { 
-            padding: 15px 0; border: none; border-radius: 8px; cursor: pointer; color: white; 
-            font-weight: bold; font-size: 1em; transition: 0.2s; box-shadow: 0 4px 0 rgba(0,0,0,0.1); 
-            width: 100%; margin-bottom: 10px;
+            padding: 15px 0; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            color: white; 
+            font-weight: bold; 
+            font-size: 1em;
+            text-transform: uppercase;
+            transition: 0.2s; 
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1); 
+            width: 100%; 
         }
         .btn:active { transform: translateY(3px); box-shadow: none; }
         
-        .btn-open { background-color: var(--success); }
-        .btn-close { background-color: var(--danger); }
-        .btn-clean { background-color: var(--info); }
-        .btn-export { background-color: var(--dark); margin-top: 5px; }
-        .btn-save { background-color: var(--primary); margin-top: 10px; }
+        .btn-open { background-color: var(--success); } /* VERT */
+        .btn-close { background-color: var(--danger); } /* ROUGE */
+        .btn-clean { background-color: var(--info); }   /* BLEU */
+        .btn-export { background-color: var(--dark); margin-top: 15px; } /* NOIR */
+        .btn-save { background-color: var(--primary); margin-top: 10px; } /* VIOLET */
 
         /* FORMULAIRES */
         .settings-group { background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
@@ -151,18 +183,24 @@
 
     <div id="tab-actions" class="tab-content">
         <div class="control-panel">
-            <div style="margin-bottom: 20px;">
-                <h3>🏠 Porte <span id="etat-porte" class="status-label">--</span></h3>
-                <div style="display:flex; gap:10px;">
-                    <button class="btn btn-open" onclick="sendCommand('porte/commande', 'open')">OUVRIR</button>
-                    <button class="btn btn-close" onclick="sendCommand('porte/commande', 'close')">FERMER</button>
-                </div>
+            
+            <div class="section-header">
+                <h3><i class="fas fa-home"></i> Porte</h3>
+                <div id="etat-porte" class="status-box">--</div>
             </div>
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-            <div style="margin-bottom: 20px;">
-                <h3>🧹 Maintenance <span id="etat-racleur" class="status-label">--</span></h3>
-                <button class="btn btn-clean" onclick="sendCommand('racleur/commande', 'open')">LANCER LE RACLEUR</button>
+            <div class="btn-group">
+                <button class="btn btn-open" onclick="sendCommand('porte/commande', 'open')">OUVRIR</button>
+                <button class="btn btn-close" onclick="sendCommand('porte/commande', 'close')">FERMER</button>
             </div>
+
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 25px 0;">
+
+            <div class="section-header">
+                <h3><i class="fas fa-broom"></i> Maintenance</h3>
+                <div id="etat-racleur" class="status-box">--</div>
+            </div>
+            <button class="btn btn-clean" onclick="sendCommand('racleur/commande', 'open')">LANCER LE RACLEUR</button>
+
             <button class="btn btn-export" onclick="exportToCSV()">💾 EXPORTER (CSV)</button>
         </div>
     </div>
@@ -254,7 +292,7 @@
             client.onMessageArrived = (msg) => {
                 const t = msg.destinationName.toLowerCase(); 
                 const p = msg.payloadString.trim();
-                const raw = p.toLowerCase(); // Version minuscule pour analyse
+                const raw = p.toLowerCase();
                 const h = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
                 lastMsg = Date.now(); updateStatus(true);
 
@@ -263,41 +301,32 @@
                 if(t.includes("luminosite")) document.getElementById("lux").innerText=p;
                 if(t.includes("nboeufs")) { document.getElementById("oeufs").innerText=p; upC(eChart,h,parseInt(p)); }
                 
-                // --- LOGIQUE CORRIGÉE ET COMPLÈTE POUR LA PORTE ---
+                // LOGIQUE PORTE
                 if(t.includes("porte")) { 
                     const el = document.getElementById("etat-porte"); 
-                    // 1. Détection Mouvement (Orange)
                     if(raw.includes("mouv") || raw.includes("moving")) {
                         el.innerText = "EN MOUVEMENT";
                         el.style.color = "#f39c12"; // Orange
-                        el.style.backgroundColor = "rgba(243, 156, 18, 0.1)";
                     } 
-                    // 2. Détection Ouverte (Vert)
                     else if(raw.includes("ouv") || raw.includes("open") || raw == "1") {
                         el.innerText = "OUVERTE";
                         el.style.color = "#2ecc71"; // Vert
-                        el.style.backgroundColor = "rgba(46, 204, 113, 0.1)";
                     } 
-                    // 3. Sinon : Fermée (Rouge)
                     else {
                         el.innerText = "FERMÉE";
                         el.style.color = "#e74c3c"; // Rouge
-                        el.style.backgroundColor = "rgba(231, 76, 60, 0.1)";
                     }
                 }
 
-                // --- LOGIQUE CORRIGÉE POUR LE RACLEUR ---
+                // LOGIQUE RACLEUR
                 if(t.includes("racleur")) { 
                     const el = document.getElementById("etat-racleur"); 
-                    // Si "fonctionnement", "run", "marche" -> Bleu
                     if(raw.includes("fonction") || raw.includes("run") || raw.includes("marche") || raw == "1") {
                         el.innerText = "EN FONCTIONNEMENT";
                         el.style.color = "#3498db"; // Bleu
-                        el.style.backgroundColor = "rgba(52, 152, 219, 0.1)";
                     } else {
                         el.innerText = "À L'ARRÊT";
                         el.style.color = "#555"; // Gris
-                        el.style.backgroundColor = "#ddd";
                     }
                 }
 
@@ -320,10 +349,7 @@
 
         function loadSettings() {
             const savedName = localStorage.getItem('appName');
-            if(savedName) {
-                document.getElementById('app-title').innerText = savedName;
-                document.getElementById('input-name').value = savedName;
-            }
+            if(savedName) { document.getElementById('app-title').innerText = savedName; document.getElementById('input-name').value = savedName; }
             const savedLat = localStorage.getItem('userLat');
             const savedLon = localStorage.getItem('userLon');
             const savedMode = localStorage.getItem('userMode');
