@@ -99,12 +99,12 @@
         }
         
         .nav-icon img {
-            /* C'est ici que la magie opère */
+            /* C'est ici que la magie opère : On interdit le rétrécissement */
             width: 80px !important;      /* Largeur forcée */
             height: 80px !important;     /* Hauteur forcée */
             min-width: 80px !important;  /* Interdiction de rétrécir */
             min-height: 80px !important; /* Interdiction de rétrécir */
-            flex-shrink: 0;              /* Interdiction absolue d'écraser l'image */
+            flex-shrink: 0 !important;   /* Interdiction absolue d'écraser l'image */
             object-fit: contain;
             display: block;
             filter: grayscale(100%) opacity(0.6);
