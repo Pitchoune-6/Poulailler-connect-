@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>KokoriConnect - VF</title>
+    <title>KokoriConnect</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="KokoriConnect">
     
-    <link rel="apple-touch-icon" href="https://pitchoune-6.github.io/Poulailler-connect-/accueil.PNG?v=ProIcons">
-    <link rel="icon" href="https://pitchoune-6.github.io/Poulailler-connect-/accueil.PNG?v=ProIcons">
+    <link rel="apple-touch-icon" href="accueil.PNG">
+    <link rel="icon" type="image/png" href="accueil.PNG">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -23,7 +23,7 @@
             font-family: 'Segoe UI', Tahoma, sans-serif;
             background: linear-gradient(to bottom, #ffffff, var(--primary));
             min-height: 100vh; margin: 0; padding: 0; color: #333; text-align: center;
-            padding-bottom: 120px; 
+            padding-bottom: 120px;
         }
 
         /* HEADER */
@@ -49,7 +49,43 @@
         .level-bar { height: 8px; background: #eee; border-radius: 4px; overflow: hidden; margin-top: 8px; }
         .level-fill { height: 100%; width: 0%; transition: 1s ease-in-out; }
         .chart-container { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); height: 250px; margin-bottom: 20px; }
-        .control-panel { background: white; border-radius: 20px; padding: 25px; max-width: 600px; margin: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        
+        /* RESTAURATION DU STYLE EXACT DES ACTIONS */
+        .control-panel { background: white; border-radius: 20px; padding: 25px; max-width: 600px; margin: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: left; }
+        .control-panel h3 { margin-top: 0; margin-bottom: 15px; color: var(--dark); font-size: 1.1em; border-bottom: none; }
+        
+        /* Badge d'état (Le fameux "--" gris à droite) */
+        .status-label { 
+            float: right;
+            font-weight: bold; 
+            padding: 4px 12px; 
+            border-radius: 6px; 
+            background: #f0f0f0; 
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        /* BOUTONS (Style d'origine) */
+        .btn { 
+            padding: 15px 0; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            color: white; 
+            font-weight: bold; 
+            font-size: 1em;
+            transition: 0.2s; 
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1); 
+            width: 100%; 
+            margin-bottom: 10px;
+        }
+        .btn:active { transform: translateY(3px); box-shadow: none; }
+        
+        .btn-open { background-color: var(--success); }
+        .btn-close { background-color: var(--danger); }
+        .btn-clean { background-color: var(--info); }
+        .btn-export { background-color: var(--dark); margin-top: 5px; }
+        .btn-save { background-color: var(--primary); margin-top: 10px; }
 
         /* FORMULAIRES */
         .settings-group { background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
@@ -59,63 +95,20 @@
         .form-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1em; box-sizing: border-box; }
         .form-select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1em; background: white; }
 
-        /* BOUTONS */
-        .btn { padding: 12px 24px; border: none; border-radius: 10px; cursor: pointer; color: white; font-weight: bold; margin: 5px; transition: 0.2s; box-shadow: 0 3px 0 rgba(0,0,0,0.2); width: 100%; }
-        .btn:active { transform: translateY(3px); box-shadow: none; }
-        .btn-open { background: var(--success); }
-        .btn-close { background: var(--danger); }
-        .btn-clean { background: var(--info); }
-        .btn-save { background: var(--primary); margin-top: 10px; }
-        .btn-export { background: var(--dark); margin-top: 15px; }
-        .status-label { font-weight: bold; padding: 2px 8px; border-radius: 5px; background: #f0f0f0; }
-
-        /* --- NAVIGATION PRO (FontAwesome) --- */
+        /* NAVIGATION BAS (FontAwesome - Propre) */
         .bottom-nav { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            width: 100%; 
-            background: white; 
-            display: flex; 
-            justify-content: space-around; 
-            padding: 12px 0 25px 0; /* Un peu plus d'espace */
-            box-shadow: 0 -2px 20px rgba(0,0,0,0.1); 
-            z-index: 1000; 
-            padding-bottom: env(safe-area-inset-bottom);
+            position: fixed; bottom: 0; left: 0; width: 100%; background: white; 
+            display: flex; justify-content: space-around; padding: 12px 0 25px 0; 
+            box-shadow: 0 -2px 20px rgba(0,0,0,0.1); z-index: 1000; padding-bottom: env(safe-area-inset-bottom);
         }
-        
         .nav-item { 
-            background: none; 
-            border: none; 
-            font-size: 0.85em; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            cursor: pointer; 
-            flex: 1; 
-            transition: 0.3s;
-            color: #300a6e; /* VIOLET FONCÉ par défaut */
-            opacity: 0.6; /* Un peu grisé par défaut */
+            background: none; border: none; font-size: 0.8em; display: flex; flex-direction: column; 
+            align-items: center; cursor: pointer; flex: 1; transition: 0.3s; color: #300a6e; opacity: 0.6;
         }
-        
-        /* Style de l'icône */
-        .nav-icon { 
-            font-size: 28px; /* Taille propre et nette */
-            margin-bottom: 4px;
-            transition: 0.3s;
-        }
+        .nav-icon { font-size: 26px; margin-bottom: 4px; transition: 0.3s; }
+        .nav-item.active { color: #a569bd; opacity: 1; font-weight: bold; }
+        .nav-item.active .nav-icon { transform: scale(1.2); }
 
-        /* ETAT ACTIF (QUAND ON CLIQUE) */
-        .nav-item.active { 
-            color: #a569bd; /* VIOLET CLAIR */
-            opacity: 1; /* Pleine visibilité */
-            font-weight: bold; 
-        }
-
-        .nav-item.active .nav-icon { 
-            transform: scale(1.25); /* Grossit de 25% */
-        }
-        
         /* MODAL */
         .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
         .modal-content { background: white; margin: 20% auto; padding: 30px; border-radius: 20px; width: 85%; max-width: 400px; text-align: center; }
@@ -132,7 +125,7 @@
     </div>
 
     <div class="header">
-        <img src="https://pitchoune-6.github.io/Poulailler-connect-/logo.png?v=Final" alt="Logo" class="mon-logo">
+        <img src="https://pitchoune-6.github.io/Poulailler-connect-/logo.png" alt="Logo" class="mon-logo">
         <div class="weather-widget">
             <span id="weather-icon">🌍</span> 
             <div>
@@ -171,15 +164,15 @@
     <div id="tab-actions" class="tab-content">
         <div class="control-panel">
             <div style="margin-bottom: 20px;">
-                <h3>🏠 Porte <span id="etat-porte" class="status-label" style="float:right">--</span></h3>
+                <h3>🏠 Porte <span id="etat-porte" class="status-label">--</span></h3>
                 <div style="display:flex; gap:10px;">
                     <button class="btn btn-open" onclick="sendCommand('porte/commande', 'open')">OUVRIR</button>
                     <button class="btn btn-close" onclick="sendCommand('porte/commande', 'close')">FERMER</button>
                 </div>
             </div>
-            <hr>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
             <div style="margin-bottom: 20px;">
-                <h3>🧹 Maintenance <span id="etat-racleur" class="status-label" style="float:right">--</span></h3>
+                <h3>🧹 Maintenance <span id="etat-racleur" class="status-label">--</span></h3>
                 <button class="btn btn-clean" onclick="sendCommand('racleur/commande', 'open')">LANCER LE RACLEUR</button>
             </div>
             <button class="btn btn-export" onclick="exportToCSV()">💾 EXPORTER (CSV)</button>
@@ -260,9 +253,7 @@
         }
 
         // --- CONFIG & GLOBALES ---
-        const broker = "mqtt.dev.icam.school"; 
-        const port = 443; 
-        const rootTopic = "bzh/mecatro/dashboard/Kokoriconnect/";
+        const broker = "mqtt.dev.icam.school"; const port = 443; const rootTopic = "bzh/mecatro/dashboard/Kokoriconnect/";
         let userLat = 47.658; let userLon = -2.760; // Valeurs par défaut
         let lastMsg = Date.now(); let history = []; let client = null;
 
@@ -301,13 +292,9 @@
                 let msg = new Paho.MQTT.Message(m); 
                 msg.destinationName = rootTopic + t; 
                 client.send(msg); 
-                console.log("Envoi MQTT : " + msg.destinationName + " -> " + m);
-            } else {
-                alert("Erreur : Non connecté au MQTT");
-            }
+            } else { alert("Erreur : Non connecté au MQTT"); }
         }
 
-        // --- GESTION DES PARAMÈTRES (AVEC NOM) ---
         function loadSettings() {
             const savedName = localStorage.getItem('appName');
             if(savedName) {
@@ -325,16 +312,12 @@
             if(savedMode) document.getElementById('input-mode').value = savedMode;
             if(savedOpen) document.getElementById('input-open-time').value = savedOpen;
             if(savedClose) document.getElementById('input-close-time').value = savedClose;
-            
             initWeather();
         }
 
         function saveSettings() {
             const newName = document.getElementById('input-name').value;
-            if(newName) {
-                localStorage.setItem('appName', newName);
-                document.getElementById('app-title').innerText = newName;
-            }
+            if(newName) { localStorage.setItem('appName', newName); document.getElementById('app-title').innerText = newName; }
             const lat = document.getElementById('input-lat').value;
             const lon = document.getElementById('input-lon').value;
             const mode = document.getElementById('input-mode').value;
@@ -351,7 +334,6 @@
             sendCommand("Config/Mode", mode);
             sendCommand("Config/HeureOuv", openT);
             sendCommand("Config/HeureFerm", closeT);
-
             alert("Paramètres sauvegardés avec succès !");
         }
 
@@ -364,7 +346,6 @@
             } else alert("GPS non supporté");
         }
 
-        // --- METEO ---
         function initWeather() {
             fetch(`https://api.open-meteo.com/v1/forecast?latitude=${userLat}&longitude=${userLon}&current_weather=true`)
             .then(r=>r.json()).then(d=>{
