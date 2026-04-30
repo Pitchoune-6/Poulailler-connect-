@@ -280,11 +280,98 @@
         const broker = "mqtt.dev.icam.school"; const port = 443; const rootTopic = "bzh/mecatro/dashboard/Kokoriconnect/";
         let userLat = 47.658; let userLon = -2.760; 
         let lastMsg = Date.now(); let history = []; let client = null;
+        
+        // Clé pour la sauvegarde du tableau de bord
+        const STORAGE_KEY = "kokori_dashboard_data";
 
         const cOpt = { responsive:true, maintainAspectRatio:false };
         const tChart = new Chart(document.getElementById('tempChart'),{type:'line',data:{labels:[],datasets:[{label:'Temp. (°C)',data:[],borderColor:'#e74c3c',fill:true,backgroundColor:'rgba(231,76,60,0.1)',tension:0.4}]},options:cOpt});
         const eChart = new Chart(document.getElementById('eggChart'),{type:'bar',data:{labels:[],datasets:[{label:'Œufs',data:[],backgroundColor:'#f1c40f'}]},options:{...cOpt,scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}});
         const lChart = new Chart(document.getElementById('levelChart'),{type:'line',data:{labels:[],datasets:[{label:'Eau %',data:[],borderColor:'#3498db'},{label:'Grain %',data:[],borderColor:'#f1c40f'}]},options:cOpt});
+
+        // --- GESTION DE LA SAUVEGARDE SUR 7 JOURS ---
+        function saveDashboardData() {
+            const dataToSave = {
+                timestamp: Date.now(),
+                history: history,
+                ui: {
+                    temp: document.getElementById("temp").innerText,
+                    hum: document.getElementById("hum").innerText,
+                    lux: document.getElementById("lux").innerText,
+                    oeufs: document.getElementById("oeufs").innerText,
+                    eau: document.getElementById("val-eau").innerText,
+                    grain: document.getElementById("val-grain").innerText,
+                    eauFill: document.getElementById("fill-eau").style.width,
+                    grainFill: document.getElementById("fill-grain").style.width,
+                    porteText: document.getElementById("etat-porte").innerText,
+                    porteColor: document.getElementById("etat-porte").style.color,
+                    racleurText: document.getElementById("etat-racleur").innerText,
+                    racleurColor: document.getElementById("etat-racleur").style.color
+                },
+                charts: {
+                    temp: { labels: tChart.data.labels, data: tChart.data.datasets[0].data },
+                    egg: { labels: eChart.data.labels, data: eChart.data.datasets[0].data },
+                    level: { labels: lChart.data.labels, eau: lChart.data.datasets[0].data, grain: lChart.data.datasets[1].data }
+                }
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+        }
+
+        function loadDashboardData() {
+            const rawData = localStorage.getItem(STORAGE_KEY);
+            if (!rawData) return;
+
+            try {
+                const data = JSON.parse(rawData);
+                const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+
+                // Si les données ont plus de 7 jours, on les efface
+                if (Date.now() - data.timestamp > SEVEN_DAYS) {
+                    console.log("Les données ont plus de 7 jours. Nettoyage.");
+                    localStorage.removeItem(STORAGE_KEY);
+                    return;
+                }
+
+                // Restauration de l'historique
+                if (data.history) history = data.history;
+
+                // Restauration de l'interface
+                if (data.ui) {
+                    document.getElementById("temp").innerText = data.ui.temp;
+                    document.getElementById("hum").innerText = data.ui.hum;
+                    document.getElementById("lux").innerText = data.ui.lux;
+                    document.getElementById("oeufs").innerText = data.ui.oeufs;
+                    document.getElementById("val-eau").innerText = data.ui.eau;
+                    document.getElementById("val-grain").innerText = data.ui.grain;
+                    document.getElementById("fill-eau").style.width = data.ui.eauFill;
+                    document.getElementById("fill-grain").style.width = data.ui.grainFill;
+                    
+                    document.getElementById("etat-porte").innerText = data.ui.porteText;
+                    document.getElementById("etat-porte").style.color = data.ui.porteColor;
+                    document.getElementById("etat-racleur").innerText = data.ui.racleurText;
+                    document.getElementById("etat-racleur").style.color = data.ui.racleurColor;
+                }
+
+                // Restauration des graphiques
+                if (data.charts) {
+                    tChart.data.labels = data.charts.temp.labels || [];
+                    tChart.data.datasets[0].data = data.charts.temp.data || [];
+                    tChart.update();
+
+                    eChart.data.labels = data.charts.egg.labels || [];
+                    eChart.data.datasets[0].data = data.charts.egg.data || [];
+                    eChart.update();
+
+                    lChart.data.labels = data.charts.level.labels || [];
+                    lChart.data.datasets[0].data = data.charts.level.eau || [];
+                    lChart.data.datasets[1].data = data.charts.level.grain || [];
+                    lChart.update();
+                }
+            } catch(e) {
+                console.error("Erreur lors de la lecture de la sauvegarde", e);
+            }
+        }
+        // ---------------------------------------------
 
         function startMQTT() {
             client = new Paho.MQTT.Client(broker, port, "app_" + Math.random().toString(16).substr(2, 6));
@@ -305,16 +392,13 @@
                 if(t.includes("porte")) { 
                     const el = document.getElementById("etat-porte"); 
                     if(raw.includes("mouv") || raw.includes("moving")) {
-                        el.innerText = "EN MOUVEMENT";
-                        el.style.color = "#f39c12"; // Orange
+                        el.innerText = "EN MOUVEMENT"; el.style.color = "#f39c12"; // Orange
                     } 
                     else if(raw.includes("ouv") || raw.includes("open") || raw == "1") {
-                        el.innerText = "OUVERTE";
-                        el.style.color = "#2ecc71"; // Vert
+                        el.innerText = "OUVERTE"; el.style.color = "#2ecc71"; // Vert
                     } 
                     else {
-                        el.innerText = "FERMÉE";
-                        el.style.color = "#e74c3c"; // Rouge
+                        el.innerText = "FERMÉE"; el.style.color = "#e74c3c"; // Rouge
                     }
                 }
 
@@ -322,11 +406,9 @@
                 if(t.includes("racleur")) { 
                     const el = document.getElementById("etat-racleur"); 
                     if(raw.includes("fonction") || raw.includes("run") || raw.includes("marche") || raw == "1") {
-                        el.innerText = "EN FONCTIONNEMENT";
-                        el.style.color = "#3498db"; // Bleu
+                        el.innerText = "EN FONCTIONNEMENT"; el.style.color = "#3498db"; // Bleu
                     } else {
-                        el.innerText = "À L'ARRÊT";
-                        el.style.color = "#555"; // Gris
+                        el.innerText = "À L'ARRÊT"; el.style.color = "#555"; // Gris
                     }
                 }
 
@@ -335,6 +417,9 @@
                 if(t.includes("etatstock") && p.toUpperCase().includes("PLEIN")) alertModal("BLOCAGE", "Stock plein ou œuf coincé !");
                 
                 history.push({h,t,p});
+                
+                // Sauvegarde après chaque mise à jour
+                saveDashboardData();
             };
             client.connect({ onSuccess:()=>{updateStatus(true); client.subscribe(rootTopic+"#");}, useSSL:true });
         }
@@ -409,12 +494,16 @@
 
         function alertModal(t, m) { document.getElementById("modal-title").innerText=t; document.getElementById("modal-msg").innerText=m; document.getElementById("modal-alerte").style.display="block"; }
         function closeModal() { document.getElementById("modal-alerte").style.display="none"; }
-        function upC(c,l,d,i=0) { c.data.labels.push(l); c.data.datasets[i].data.push(d); if(c.data.labels.length>10){c.data.labels.shift();c.data.datasets[i].data.shift();} c.update(); }
+        
+        // J'ai monté la limite à 50 points au lieu de 10 pour avoir un vrai historique visuel
+        function upC(c,l,d,i=0) { c.data.labels.push(l); c.data.datasets[i].data.push(d); if(c.data.labels.length>50){c.data.labels.shift();c.data.datasets[i].data.shift();} c.update(); }
+        
         function updateStatus(o) { document.getElementById('pico-status').innerText=o?"En ligne":"Hors ligne"; document.getElementById('pico-status').style.color=o?"green":"red"; }
         function exportToCSV() { let c="Heure,Topic,Valeur\n"; history.forEach(r=>c+=`${r.h},${r.t},${r.p}\n`); const b=new Blob([c],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='data.csv'; a.click(); }
 
         // START
         loadSettings(); 
+        loadDashboardData(); // <-- Chargement des données au démarrage
         startMQTT();
         setInterval(()=>{if(Date.now()-lastMsg>35000)updateStatus(false);},5000);
     </script>
