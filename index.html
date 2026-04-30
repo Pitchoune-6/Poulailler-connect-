@@ -493,7 +493,16 @@
         function getWI(c){if(c===0)return"☀️";if(c<4)return"☁️";if(c<50)return"🌫️";if(c<70)return"🌧️";return"🌤️";}
 
         function alertModal(t, m) { document.getElementById("modal-title").innerText=t; document.getElementById("modal-msg").innerText=m; document.getElementById("modal-alerte").style.display="block"; }
-        function closeModal() { document.getElementById("modal-alerte").style.display="none"; }
+        
+        // --- LA NOUVELLE FONCTION CLOSE MODAL ---
+        function closeModal() { 
+            const titreAlerte = document.getElementById("modal-title").innerText;
+            if (titreAlerte === "BLOCAGE") {
+                sendCommand('oeufs/reset', '1');
+            }
+            document.getElementById("modal-alerte").style.display="none"; 
+        }
+        // ----------------------------------------
         
         // J'ai monté la limite à 50 points au lieu de 10 pour avoir un vrai historique visuel
         function upC(c,l,d,i=0) { c.data.labels.push(l); c.data.datasets[i].data.push(d); if(c.data.labels.length>50){c.data.labels.shift();c.data.datasets[i].data.shift();} c.update(); }
