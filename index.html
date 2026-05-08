@@ -19,28 +19,18 @@
     <style>
         :root { --primary: #4e23af; --danger: #e74c3c; --success: #2ecc71; --warning: #f1c40f; --info: #3498db; --dark: #2c3e50; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: linear-gradient(to bottom, #ffffff, var(--primary));
-            min-height: 100vh; margin: 0; padding: 0; color: #333; text-align: center;
-            padding-bottom: 120px;
-        }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: linear-gradient(to bottom, #ffffff, var(--primary)); min-height: 100vh; margin: 0; padding: 0; color: #333; text-align: center; padding-bottom: 120px; }
 
-        /* HEADER */
         .header { display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; padding: 15px; gap: 10px; }
         .mon-logo { width: 120px; height: auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
-        
         h1 { color: var(--dark); margin: 10px 0 20px 0; font-size: 1.8em; text-transform: capitalize; }
-        
         .status-pill { padding: 8px 15px; border-radius: 20px; font-size: 0.85em; font-weight: bold; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .weather-widget { background: rgba(255,255,255,0.9); padding: 8px 20px; border-radius: 20px; font-size: 0.9em; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 10px; }
 
-        /* ONGLETS */
         .tab-content { display: none; padding: 10px; animation: fadeIn 0.3s ease-in-out; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* CARTES */
         .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 15px; max-width: 1100px; margin: auto; }
         .card { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; text-align: left; }
         .card h3 { margin: 0; font-size: 0.75em; color: #7f8c8d; text-transform: uppercase; }
@@ -50,86 +40,27 @@
         .level-fill { height: 100%; width: 0%; transition: 1s ease-in-out; }
         .chart-container { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); height: 250px; margin-bottom: 20px; }
         
-        /* RESTAURATION DU STYLE DES ACTIONS */
-        .control-panel { 
-            background: white; border-radius: 20px; padding: 25px; max-width: 600px; margin: auto; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: left; 
-        }
-        
-        /* Style du titre de section (Porte / Maintenance) */
-        .section-header {
-            display: flex;
-            justify-content: space-between; /* Titre à gauche, état à droite */
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .section-header h3 {
-            margin: 0;
-            font-size: 1.2em;
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .control-panel { background: white; border-radius: 20px; padding: 25px; max-width: 600px; margin: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: left; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .section-header h3 { margin: 0; font-size: 1.2em; color: var(--dark); display: flex; align-items: center; gap: 10px; }
+        .status-box { background: #eee; color: #555; padding: 5px 12px; border-radius: 8px; font-weight: bold; font-size: 0.9em; min-width: 40px; text-align: center; }
 
-        /* Badge d'état (Le petit carré gris) */
-        .status-box {
-            background: #eee;
-            color: #555;
-            padding: 5px 12px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 0.9em;
-            min-width: 40px;
-            text-align: center;
-        }
-
-        /* GROS BOUTONS COLORÉS */
         .btn-group { display: flex; gap: 10px; width: 100%; }
-        .btn { 
-            padding: 15px 0; 
-            border: none; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            color: white; 
-            font-weight: bold; 
-            font-size: 1em;
-            text-transform: uppercase;
-            transition: 0.2s; 
-            box-shadow: 0 4px 0 rgba(0,0,0,0.1); 
-            width: 100%; 
-        }
+        .btn { padding: 15px 0; border: none; border-radius: 8px; cursor: pointer; color: white; font-weight: bold; font-size: 1em; text-transform: uppercase; transition: 0.2s; box-shadow: 0 4px 0 rgba(0,0,0,0.1); width: 100%; }
         .btn:active { transform: translateY(3px); box-shadow: none; }
-        
-        .btn-open { background-color: var(--success); } /* VERT */
-        .btn-close { background-color: var(--danger); } /* ROUGE */
-        .btn-clean { background-color: var(--info); }   /* BLEU */
-        .btn-export { background-color: var(--dark); margin-top: 15px; } /* NOIR */
-        .btn-save { background-color: var(--primary); margin-top: 10px; } /* VIOLET */
+        .btn-open { background-color: var(--success); } .btn-close { background-color: var(--danger); } .btn-clean { background-color: var(--info); }
+        .btn-export { background-color: var(--dark); margin-top: 15px; } .btn-save { background-color: var(--primary); margin-top: 10px; }
 
-        /* FORMULAIRES */
         .settings-group { background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .settings-group h3 { margin-top: 0; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        .form-row { margin-bottom: 15px; }
-        .form-row label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9em; }
-        .form-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1em; box-sizing: border-box; }
-        .form-select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1em; background: white; }
+        .form-row { margin-bottom: 15px; } .form-row label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9em; }
+        .form-input, .form-select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1em; box-sizing: border-box; background: white; }
 
-        /* NAVIGATION BAS (FontAwesome) */
-        .bottom-nav { 
-            position: fixed; bottom: 0; left: 0; width: 100%; background: white; 
-            display: flex; justify-content: space-around; padding: 12px 0 25px 0; 
-            box-shadow: 0 -2px 20px rgba(0,0,0,0.1); z-index: 1000; padding-bottom: env(safe-area-inset-bottom);
-        }
-        .nav-item { 
-            background: none; border: none; font-size: 0.8em; display: flex; flex-direction: column; 
-            align-items: center; cursor: pointer; flex: 1; transition: 0.3s; color: #300a6e; opacity: 0.6;
-        }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0 25px 0; box-shadow: 0 -2px 20px rgba(0,0,0,0.1); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
+        .nav-item { background: none; border: none; font-size: 0.8em; display: flex; flex-direction: column; align-items: center; cursor: pointer; flex: 1; transition: 0.3s; color: #300a6e; opacity: 0.6; }
         .nav-icon { font-size: 26px; margin-bottom: 4px; transition: 0.3s; }
-        .nav-item.active { color: #a569bd; opacity: 1; font-weight: bold; }
-        .nav-item.active .nav-icon { transform: scale(1.2); }
+        .nav-item.active { color: #a569bd; opacity: 1; font-weight: bold; } .nav-item.active .nav-icon { transform: scale(1.2); }
 
-        /* MODAL */
         .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
         .modal-content { background: white; margin: 20% auto; padding: 30px; border-radius: 20px; width: 85%; max-width: 400px; text-align: center; }
     </style>
@@ -162,15 +93,12 @@
         <div class="dashboard-grid">
             <div class="card"><div class="card-icon">🌡️</div><h3>Température</h3><p id="temp">--°C</p></div>
             <div class="card"><div class="card-icon">💧</div><h3>Humidité</h3><p id="hum">--%</p></div>
-            <div class="card"><div class="card-icon">☀️</div><h3>Luminosité</h3><p id="lux">-- lux</p></div>
+            <div class="card"><div class="card-icon">☀️</div><h3>Luminosité</h3><p id="lux">--%</p></div>
             <div class="card"><div class="card-icon">🥚</div><h3>Œufs</h3><p id="oeufs">0</p></div>
+            <div class="card"><div class="card-icon">⚖️</div><h3>Mangeoire</h3><p id="poids">-- kg</p></div>
             <div class="card">
                 <h3>Eau</h3><p id="val-eau">--%</p>
                 <div class="level-bar"><div id="fill-eau" class="level-fill" style="background: var(--info);"></div></div>
-            </div>
-            <div class="card">
-                <h3>Grain</h3><p id="val-grain">--%</p>
-                <div class="level-bar"><div id="fill-grain" class="level-fill" style="background: var(--warning);"></div></div>
             </div>
         </div>
     </div>
@@ -183,7 +111,6 @@
 
     <div id="tab-actions" class="tab-content">
         <div class="control-panel">
-            
             <div class="section-header">
                 <h3><i class="fas fa-home"></i> Porte</h3>
                 <div id="etat-porte" class="status-box">--</div>
@@ -192,15 +119,13 @@
                 <button class="btn btn-open" onclick="sendCommand('porte/commande', 'open')">OUVRIR</button>
                 <button class="btn btn-close" onclick="sendCommand('porte/commande', 'close')">FERMER</button>
             </div>
-
             <hr style="border: 0; border-top: 1px solid #eee; margin: 25px 0;">
-
             <div class="section-header">
                 <h3><i class="fas fa-broom"></i> Maintenance</h3>
                 <div id="etat-racleur" class="status-box">--</div>
             </div>
             <button class="btn btn-clean" onclick="sendCommand('racleur/commande', 'open')">LANCER LE RACLEUR</button>
-            <button class="btn" style="background-color: var(--warning); margin-top: 15px;" onclick="sendCommand('oeufs/reset', '1')">🥚 RÉINITIALISER LE COMPTEUR D'ŒUFS</button>
+            <button class="btn" style="background-color: var(--warning); margin-top: 15px;" onclick="sendCommand('oeufs/reset', '1')">🥚 RÉINITIALISER LE COMPTEUR</button>
             <button class="btn btn-export" onclick="exportToCSV()">💾 EXPORTER (CSV)</button>
         </div>
     </div>
@@ -208,65 +133,35 @@
     <div id="tab-settings" class="tab-content">
         <div class="settings-group">
             <h3>🏷️ Personnalisation</h3>
-            <div class="form-row">
-                <label>Nom du poulailler :</label>
-                <input type="text" id="input-name" class="form-input" placeholder="Ex: Palace des Poules">
-            </div>
+            <div class="form-row"><label>Nom du poulailler :</label><input type="text" id="input-name" class="form-input"></div>
         </div>
-
         <div class="settings-group">
             <h3>🌍 Localisation (Météo)</h3>
-            <div class="form-row">
-                <label>Latitude :</label>
-                <input type="number" step="0.0001" id="input-lat" class="form-input" placeholder="Ex: 47.658">
-            </div>
-            <div class="form-row">
-                <label>Longitude :</label>
-                <input type="number" step="0.0001" id="input-lon" class="form-input" placeholder="Ex: -2.760">
-            </div>
+            <div class="form-row"><label>Latitude :</label><input type="number" step="0.0001" id="input-lat" class="form-input"></div>
+            <div class="form-row"><label>Longitude :</label><input type="number" step="0.0001" id="input-lon" class="form-input"></div>
             <button class="btn btn-clean" onclick="getMyGPS()">📍 Ma position actuelle</button>
         </div>
-
         <div class="settings-group">
             <h3>⚙️ Automatisme Porte</h3>
             <div class="form-row">
                 <label>Mode de fonctionnement :</label>
                 <select id="input-mode" class="form-select">
                     <option value="MANUEL">Manuel (Boutons uniquement)</option>
-                    <option value="AUTO_LUX">Automatique (Luminosité)</option>
+                    <option value="AUTO_LIGHT">Automatique (Soleil)</option>
                     <option value="AUTO_TIME">Horaires Fixes</option>
                 </select>
             </div>
-            <div class="form-row">
-                <label>Heure d'ouverture :</label>
-                <input type="time" id="input-open-time" class="form-input">
-            </div>
-            <div class="form-row">
-                <label>Heure de fermeture :</label>
-                <input type="time" id="input-close-time" class="form-input">
-            </div>
+            <div class="form-row"><label>Heure d'ouverture :</label><input type="time" id="input-open-time" class="form-input"></div>
+            <div class="form-row"><label>Heure de fermeture :</label><input type="time" id="input-close-time" class="form-input"></div>
         </div>
-
         <button class="btn btn-save" onclick="saveSettings()">💾 SAUVEGARDER & ENVOYER</button>
     </div>
 
     <div class="bottom-nav">
-        <button class="nav-item active" onclick="switchTab('home', this)">
-            <i class="nav-icon fas fa-home"></i>
-            <span>Accueil</span>
-        </button>
-        <button class="nav-item" onclick="switchTab('stats', this)">
-            <i class="nav-icon fas fa-chart-bar"></i>
-            <span>Stats</span>
-        </button>
-        <button class="nav-item" onclick="switchTab('actions', this)">
-            <i class="nav-icon fas fa-gamepad"></i>
-            <span>Actions</span>
-        </button>
-        <button class="nav-item" onclick="switchTab('settings', this)">
-            <i class="nav-icon fas fa-cog"></i>
-            <span>Réglages</span>
-        </button>
+        <button class="nav-item active" onclick="switchTab('home', this)"><i class="nav-icon fas fa-home"></i><span>Accueil</span></button>
+        <button class="nav-item" onclick="switchTab('stats', this)"><i class="nav-icon fas fa-chart-bar"></i><span>Stats</span></button>
+        <button class="nav-item" onclick="switchTab('actions', this)"><i class="nav-icon fas fa-gamepad"></i><span>Actions</span></button>
+        <button class="nav-item" onclick="switchTab('settings', this)"><i class="nav-icon fas fa-cog"></i><span>Réglages</span></button>
     </div>
 
     <script>
@@ -280,38 +175,30 @@
         const broker = "mqtt.dev.icam.school"; const port = 443; const rootTopic = "bzh/mecatro/dashboard/Kokoriconnect/";
         let userLat = 47.658; let userLon = -2.760; 
         let lastMsg = Date.now(); let history = []; let client = null;
-        
-        // Clé pour la sauvegarde du tableau de bord
         const STORAGE_KEY = "kokori_dashboard_data";
 
         const cOpt = { responsive:true, maintainAspectRatio:false };
         const tChart = new Chart(document.getElementById('tempChart'),{type:'line',data:{labels:[],datasets:[{label:'Temp. (°C)',data:[],borderColor:'#e74c3c',fill:true,backgroundColor:'rgba(231,76,60,0.1)',tension:0.4}]},options:cOpt});
         const eChart = new Chart(document.getElementById('eggChart'),{type:'bar',data:{labels:[],datasets:[{label:'Œufs',data:[],backgroundColor:'#f1c40f'}]},options:{...cOpt,scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}});
-        const lChart = new Chart(document.getElementById('levelChart'),{type:'line',data:{labels:[],datasets:[{label:'Eau %',data:[],borderColor:'#3498db'},{label:'Grain %',data:[],borderColor:'#f1c40f'}]},options:cOpt});
+        
+        // CORRECTION : J'ai remis la courbe "Poids" dans le graphique
+        const lChart = new Chart(document.getElementById('levelChart'),{type:'line',data:{labels:[],datasets:[{label:'Eau %',data:[],borderColor:'#3498db'},{label:'Poids (kg)',data:[],borderColor:'#8e44ad'}]},options:cOpt});
 
-        // --- GESTION DE LA SAUVEGARDE SUR 7 JOURS ---
         function saveDashboardData() {
             const dataToSave = {
-                timestamp: Date.now(),
-                history: history,
+                timestamp: Date.now(), history: history,
                 ui: {
-                    temp: document.getElementById("temp").innerText,
-                    hum: document.getElementById("hum").innerText,
-                    lux: document.getElementById("lux").innerText,
-                    oeufs: document.getElementById("oeufs").innerText,
-                    eau: document.getElementById("val-eau").innerText,
-                    grain: document.getElementById("val-grain").innerText,
-                    eauFill: document.getElementById("fill-eau").style.width,
-                    grainFill: document.getElementById("fill-grain").style.width,
-                    porteText: document.getElementById("etat-porte").innerText,
-                    porteColor: document.getElementById("etat-porte").style.color,
-                    racleurText: document.getElementById("etat-racleur").innerText,
+                    temp: document.getElementById("temp").innerText, hum: document.getElementById("hum").innerText,
+                    lux: document.getElementById("lux").innerText, oeufs: document.getElementById("oeufs").innerText,
+                    poids: document.getElementById("poids").innerText, eau: document.getElementById("val-eau").innerText,
+                    eauFill: document.getElementById("fill-eau").style.width, porteText: document.getElementById("etat-porte").innerText,
+                    porteColor: document.getElementById("etat-porte").style.color, racleurText: document.getElementById("etat-racleur").innerText,
                     racleurColor: document.getElementById("etat-racleur").style.color
                 },
                 charts: {
                     temp: { labels: tChart.data.labels, data: tChart.data.datasets[0].data },
                     egg: { labels: eChart.data.labels, data: eChart.data.datasets[0].data },
-                    level: { labels: lChart.data.labels, eau: lChart.data.datasets[0].data, grain: lChart.data.datasets[1].data }
+                    level: { labels: lChart.data.labels, eau: lChart.data.datasets[0].data, poids: lChart.data.datasets[1].data }
                 }
             };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
@@ -320,66 +207,35 @@
         function loadDashboardData() {
             const rawData = localStorage.getItem(STORAGE_KEY);
             if (!rawData) return;
-
             try {
                 const data = JSON.parse(rawData);
-                const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
-
-                // Si les données ont plus de 7 jours, on les efface
-                if (Date.now() - data.timestamp > SEVEN_DAYS) {
-                    console.log("Les données ont plus de 7 jours. Nettoyage.");
-                    localStorage.removeItem(STORAGE_KEY);
-                    return;
-                }
-
-                // Restauration de l'historique
+                if (Date.now() - data.timestamp > 7 * 24 * 60 * 60 * 1000) { localStorage.removeItem(STORAGE_KEY); return; }
                 if (data.history) history = data.history;
-
-                // Restauration de l'interface
                 if (data.ui) {
-                    document.getElementById("temp").innerText = data.ui.temp;
-                    document.getElementById("hum").innerText = data.ui.hum;
-                    document.getElementById("lux").innerText = data.ui.lux;
-                    document.getElementById("oeufs").innerText = data.ui.oeufs;
-                    document.getElementById("val-eau").innerText = data.ui.eau;
-                    document.getElementById("val-grain").innerText = data.ui.grain;
-                    document.getElementById("fill-eau").style.width = data.ui.eauFill;
-                    document.getElementById("fill-grain").style.width = data.ui.grainFill;
-                    
-                    document.getElementById("etat-porte").innerText = data.ui.porteText;
-                    document.getElementById("etat-porte").style.color = data.ui.porteColor;
-                    document.getElementById("etat-racleur").innerText = data.ui.racleurText;
-                    document.getElementById("etat-racleur").style.color = data.ui.racleurColor;
+                    document.getElementById("temp").innerText = data.ui.temp; document.getElementById("hum").innerText = data.ui.hum;
+                    document.getElementById("lux").innerText = data.ui.lux; document.getElementById("oeufs").innerText = data.ui.oeufs;
+                    if(data.ui.poids) document.getElementById("poids").innerText = data.ui.poids;
+                    document.getElementById("val-eau").innerText = data.ui.eau; document.getElementById("fill-eau").style.width = data.ui.eauFill;
+                    document.getElementById("etat-porte").innerText = data.ui.porteText; document.getElementById("etat-porte").style.color = data.ui.porteColor;
+                    document.getElementById("etat-racleur").innerText = data.ui.racleurText; document.getElementById("etat-racleur").style.color = data.ui.racleurColor;
                 }
-
-                // Restauration des graphiques
                 if (data.charts) {
-                    tChart.data.labels = data.charts.temp.labels || [];
-                    tChart.data.datasets[0].data = data.charts.temp.data || [];
-                    tChart.update();
-
-                    eChart.data.labels = data.charts.egg.labels || [];
-                    eChart.data.datasets[0].data = data.charts.egg.data || [];
-                    eChart.update();
-
+                    tChart.data.labels = data.charts.temp.labels || []; tChart.data.datasets[0].data = data.charts.temp.data || []; tChart.update();
+                    eChart.data.labels = data.charts.egg.labels || []; eChart.data.datasets[0].data = data.charts.egg.data || []; eChart.update();
                     lChart.data.labels = data.charts.level.labels || [];
                     lChart.data.datasets[0].data = data.charts.level.eau || [];
-                    lChart.data.datasets[1].data = data.charts.level.grain || [];
+                    if(data.charts.level.poids) lChart.data.datasets[1].data = data.charts.level.poids || [];
                     lChart.update();
                 }
-            } catch(e) {
-                console.error("Erreur lors de la lecture de la sauvegarde", e);
-            }
+            } catch(e) { console.error("Erreur lecture sauvegarde", e); }
         }
-        // ---------------------------------------------
 
         function startMQTT() {
             client = new Paho.MQTT.Client(broker, port, "app_" + Math.random().toString(16).substr(2, 6));
             client.onConnectionLost = () => updateStatus(false);
             client.onMessageArrived = (msg) => {
                 const t = msg.destinationName.toLowerCase(); 
-                const p = msg.payloadString.trim();
-                const raw = p.toLowerCase();
+                const p = msg.payloadString.trim(); const raw = p.toLowerCase();
                 const h = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
                 lastMsg = Date.now(); updateStatus(true);
 
@@ -388,132 +244,91 @@
                 if(t.includes("luminosite")) document.getElementById("lux").innerText=p;
                 if(t.includes("nboeufs")) { document.getElementById("oeufs").innerText=p; upC(eChart,h,parseInt(p)); }
                 
-                // LOGIQUE PORTE
+                // Réception du poids pour la jauge et la courbe 1
+                if(t.includes("poidsnourriture")) { document.getElementById("poids").innerText=p; upC(lChart,h,parseFloat(p.replace(/[^\d.-]/g,'')),1); }
+                // Réception de l'eau pour la jauge et la courbe 0
+                if(t.includes("niveaueau")) { const v=parseInt(p); document.getElementById("val-eau").innerText=v+"%"; document.getElementById("fill-eau").style.width=v+"%"; upC(lChart,h,v,0); if(v<10) alertModal("EAU BASSE", v+"% restants !"); }
+
                 if(t.includes("porte")) { 
                     const el = document.getElementById("etat-porte"); 
-                    if(raw.includes("mouv") || raw.includes("moving")) {
-                        el.innerText = "EN MOUVEMENT"; el.style.color = "#f39c12"; // Orange
-                    } 
-                    else if(raw.includes("ouv") || raw.includes("open") || raw == "1") {
-                        el.innerText = "OUVERTE"; el.style.color = "#2ecc71"; // Vert
-                    } 
-                    else {
-                        el.innerText = "FERMÉE"; el.style.color = "#e74c3c"; // Rouge
-                    }
+                    if(raw.includes("mouv") || raw.includes("moving")) { el.innerText = "EN MOUVEMENT"; el.style.color = "#f39c12"; } 
+                    else if(raw.includes("ouv") || raw.includes("open") || raw == "1") { el.innerText = "OUVERTE"; el.style.color = "#2ecc71"; } 
+                    else { el.innerText = "FERMÉE"; el.style.color = "#e74c3c"; }
                 }
-
-                // LOGIQUE RACLEUR
                 if(t.includes("racleur")) { 
                     const el = document.getElementById("etat-racleur"); 
-                    if(raw.includes("fonction") || raw.includes("run") || raw.includes("marche") || raw == "1") {
-                        el.innerText = "EN FONCTIONNEMENT"; el.style.color = "#3498db"; // Bleu
-                    } else {
-                        el.innerText = "À L'ARRÊT"; el.style.color = "#555"; // Gris
-                    }
+                    if(raw.includes("fonction") || raw.includes("run") || raw.includes("marche") || raw == "1") { el.innerText = "EN FONCTIONNEMENT"; el.style.color = "#3498db"; } 
+                    else { el.innerText = "À L'ARRÊT"; el.style.color = "#555"; }
                 }
-
-                if(t.includes("niveaueau")) { const v=parseInt(p); document.getElementById("val-eau").innerText=v+"%"; document.getElementById("fill-eau").style.width=v+"%"; upC(lChart,h,v,0); if(v<10) alertModal("EAU BASSE", v+"% restants !"); }
-                if(t.includes("niveaugrain")) { const v=parseInt(p); document.getElementById("val-grain").innerText=v+"%"; document.getElementById("fill-grain").style.width=v+"%"; upC(lChart,h,v,1); if(v<10) alertModal("GRAIN BAS", v+"% restants !"); }
                 if(t.includes("etatstock") && p.toUpperCase().includes("PLEIN")) alertModal("BLOCAGE", "Stock plein ou œuf coincé !");
                 
-                history.push({h,t,p});
-                
-                // Sauvegarde après chaque mise à jour
-                saveDashboardData();
+                history.push({h,t,p}); saveDashboardData();
             };
-            client.connect({ onSuccess:()=>{updateStatus(true); client.subscribe(rootTopic+"#");}, useSSL:true });
+            
+            client.connect({ onSuccess:()=>{
+                updateStatus(true); 
+                client.subscribe(rootTopic+"#");
+                
+                // AMÉLIORATION : Renvoi de la config sauvegardée lors de la connexion
+                const savedMode = localStorage.getItem('userMode');
+                if(savedMode) {
+                    sendCommand("Config/Mode", savedMode);
+                    sendCommand("Config/HeureOuv", localStorage.getItem('userOpen') || "08:00");
+                    sendCommand("Config/HeureFerm", localStorage.getItem('userClose') || "20:00");
+                }
+            }, useSSL:true });
         }
 
         function sendCommand(t, m) { 
-            if(client && client.isConnected()){ 
-                let msg = new Paho.MQTT.Message(m); 
-                msg.destinationName = rootTopic + t; 
-                client.send(msg); 
-            } else { alert("Erreur : Non connecté au MQTT"); }
+            if(client && client.isConnected()){ let msg = new Paho.MQTT.Message(m); msg.destinationName = rootTopic + t; client.send(msg); } 
+            else { console.log("Attente MQTT pour : " + m); }
         }
 
         function loadSettings() {
-            const savedName = localStorage.getItem('appName');
-            if(savedName) { document.getElementById('app-title').innerText = savedName; document.getElementById('input-name').value = savedName; }
-            const savedLat = localStorage.getItem('userLat');
-            const savedLon = localStorage.getItem('userLon');
-            const savedMode = localStorage.getItem('userMode');
-            const savedOpen = localStorage.getItem('userOpen');
-            const savedClose = localStorage.getItem('userClose');
-
+            const savedName = localStorage.getItem('appName'); if(savedName) { document.getElementById('app-title').innerText = savedName; document.getElementById('input-name').value = savedName; }
+            const savedLat = localStorage.getItem('userLat'); const savedLon = localStorage.getItem('userLon');
             if(savedLat) { userLat = savedLat; document.getElementById('input-lat').value = savedLat; }
             if(savedLon) { userLon = savedLon; document.getElementById('input-lon').value = savedLon; }
-            if(savedMode) document.getElementById('input-mode').value = savedMode;
-            if(savedOpen) document.getElementById('input-open-time').value = savedOpen;
-            if(savedClose) document.getElementById('input-close-time').value = savedClose;
+            
+            const savedMode = localStorage.getItem('userMode'); if(savedMode) document.getElementById('input-mode').value = savedMode;
+            const savedOpen = localStorage.getItem('userOpen'); if(savedOpen) document.getElementById('input-open-time').value = savedOpen;
+            const savedClose = localStorage.getItem('userClose'); if(savedClose) document.getElementById('input-close-time').value = savedClose;
             initWeather();
         }
 
         function saveSettings() {
-            const newName = document.getElementById('input-name').value;
-            if(newName) { localStorage.setItem('appName', newName); document.getElementById('app-title').innerText = newName; }
-            const lat = document.getElementById('input-lat').value;
-            const lon = document.getElementById('input-lon').value;
-            const mode = document.getElementById('input-mode').value;
-            const openT = document.getElementById('input-open-time').value;
-            const closeT = document.getElementById('input-close-time').value;
+            const newName = document.getElementById('input-name').value; if(newName) { localStorage.setItem('appName', newName); document.getElementById('app-title').innerText = newName; }
+            const lat = document.getElementById('input-lat').value; const lon = document.getElementById('input-lon').value;
+            const mode = document.getElementById('input-mode').value; const openT = document.getElementById('input-open-time').value; const closeT = document.getElementById('input-close-time').value;
 
             if(lat) { localStorage.setItem('userLat', lat); userLat = lat; }
             if(lon) { localStorage.setItem('userLon', lon); userLon = lon; }
-            localStorage.setItem('userMode', mode);
-            localStorage.setItem('userOpen', openT);
-            localStorage.setItem('userClose', closeT);
+            localStorage.setItem('userMode', mode); localStorage.setItem('userOpen', openT); localStorage.setItem('userClose', closeT);
 
             initWeather();
-            sendCommand("Config/Mode", mode);
-            sendCommand("Config/HeureOuv", openT);
-            sendCommand("Config/HeureFerm", closeT);
+            sendCommand("Config/Mode", mode); sendCommand("Config/HeureOuv", openT); sendCommand("Config/HeureFerm", closeT);
             alert("Paramètres sauvegardés avec succès !");
         }
 
         function getMyGPS() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition((pos) => {
-                    document.getElementById('input-lat').value = pos.coords.latitude;
-                    document.getElementById('input-lon').value = pos.coords.longitude;
-                }, () => alert("GPS non accessible"));
-            } else alert("GPS non supporté");
+            if (navigator.geolocation) { navigator.geolocation.getCurrentPosition((pos) => { document.getElementById('input-lat').value = pos.coords.latitude; document.getElementById('input-lon').value = pos.coords.longitude; }, () => alert("GPS non accessible")); } else alert("GPS non supporté");
         }
 
         function initWeather() {
-            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${userLat}&longitude=${userLon}&current_weather=true`)
-            .then(r=>r.json()).then(d=>{
-                if(d.current_weather){
-                    document.getElementById("weather-temp").innerText=d.current_weather.temperature+"°C";
-                    document.getElementById("weather-desc").innerText="Météo locale";
-                    document.getElementById("weather-icon").innerText=getWI(d.current_weather.weathercode);
-                }
+            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${userLat}&longitude=${userLon}&current_weather=true`).then(r=>r.json()).then(d=>{
+                if(d.current_weather){ document.getElementById("weather-temp").innerText=d.current_weather.temperature+"°C"; document.getElementById("weather-desc").innerText="Météo locale"; document.getElementById("weather-icon").innerText=getWI(d.current_weather.weathercode); }
             }).catch(()=>{document.getElementById("weather-desc").innerText="Erreur Météo";});
         }
         function getWI(c){if(c===0)return"☀️";if(c<4)return"☁️";if(c<50)return"🌫️";if(c<70)return"🌧️";return"🌤️";}
 
         function alertModal(t, m) { document.getElementById("modal-title").innerText=t; document.getElementById("modal-msg").innerText=m; document.getElementById("modal-alerte").style.display="block"; }
+        function closeModal() { if (document.getElementById("modal-title").innerText === "BLOCAGE") { sendCommand('oeufs/reset', '1'); } document.getElementById("modal-alerte").style.display="none"; }
         
-        // --- LA NOUVELLE FONCTION CLOSE MODAL ---
-        function closeModal() { 
-            const titreAlerte = document.getElementById("modal-title").innerText;
-            if (titreAlerte === "BLOCAGE") {
-                sendCommand('oeufs/reset', '1');
-            }
-            document.getElementById("modal-alerte").style.display="none"; 
-        }
-        // ----------------------------------------
-        
-        // J'ai monté la limite à 50 points au lieu de 10 pour avoir un vrai historique visuel
         function upC(c,l,d,i=0) { c.data.labels.push(l); c.data.datasets[i].data.push(d); if(c.data.labels.length>50){c.data.labels.shift();c.data.datasets[i].data.shift();} c.update(); }
-        
         function updateStatus(o) { document.getElementById('pico-status').innerText=o?"En ligne":"Hors ligne"; document.getElementById('pico-status').style.color=o?"green":"red"; }
         function exportToCSV() { let c="Heure,Topic,Valeur\n"; history.forEach(r=>c+=`${r.h},${r.t},${r.p}\n`); const b=new Blob([c],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='data.csv'; a.click(); }
 
-        // START
-        loadSettings(); 
-        loadDashboardData(); // <-- Chargement des données au démarrage
-        startMQTT();
+        loadSettings(); loadDashboardData(); startMQTT();
         setInterval(()=>{if(Date.now()-lastMsg>35000)updateStatus(false);},5000);
     </script>
 </body>
