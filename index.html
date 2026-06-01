@@ -91,13 +91,13 @@
 
     <div id="tab-home" class="tab-content active">
         <div class="dashboard-grid">
-            <div class="card"><div class="card-icon">🌡️</div><h3>Température</h3><p id="temp">--°C</p></div>
-            <div class="card"><div class="card-icon">💧</div><h3>Humidité</h3><p id="hum">--%</p></div>
-            <div class="card"><div class="card-icon">☀️</div><h3>Luminosité</h3><p id="lux">--%</p></div>
+            <div class="card"><div class="card-icon">🌡️</div><h3>Température</h3><p id="temp">-- °C</p></div>
+            <div class="card"><div class="card-icon">💧</div><h3>Humidité</h3><p id="hum">-- %</p></div>
+            <div class="card"><div class="card-icon">☀️</div><h3>Luminosité</h3><p id="lux">-- %</p></div>
             <div class="card"><div class="card-icon">🥚</div><h3>Œufs</h3><p id="oeufs">0</p></div>
             <div class="card"><div class="card-icon">⚖️</div><h3>Mangeoire</h3><p id="poids">-- kg</p></div>
             <div class="card">
-                <h3>Eau</h3><p id="val-eau">--%</p>
+                <h3>Eau</h3><p id="val-eau">-- %</p>
                 <div class="level-bar"><div id="fill-eau" class="level-fill" style="background: var(--info);"></div></div>
             </div>
         </div>
@@ -154,6 +154,13 @@
             <div class="form-row"><label>Heure d'ouverture :</label><input type="time" id="input-open-time" class="form-input"></div>
             <div class="form-row"><label>Heure de fermeture :</label><input type="time" id="input-close-time" class="form-input"></div>
         </div>
+        
+        <div class="settings-group">
+            <h3>💧/🌾 Automatisme Distributions</h3>
+            <div class="form-row"><label>Heure de distribution de l'eau :</label><input type="time" id="input-eau-time" class="form-input" value="09:00"></div>
+            <div class="form-row"><label>Heure de distribution de nourriture :</label><input type="time" id="input-nourr-time" class="form-input" value="09:05"></div>
+        </div>
+
         <button class="btn btn-save" onclick="saveSettings()">💾 SAUVEGARDER & ENVOYER</button>
     </div>
 
@@ -172,7 +179,10 @@
             btn.classList.add('active');
         }
 
-        const broker = "mqtt.dev.icam.school"; const port = 443; const rootTopic = "bzh/mecatro/dashboard/Kokoriconnect/";
+        const broker = "mqtt.dev.icam.school"; const port = 443; 
+        const subscribeTopic = "bzh/mecatro/app/Kokoriconnect/#"; 
+        const cmdTopic = "bzh/mecatro/app/Kokoriconnect/";
+
         let userLat = 47.658; let userLon = -2.760; 
         let lastMsg = Date.now(); let history = []; let client = null;
         const STORAGE_KEY = "kokori_dashboard_data";
@@ -180,8 +190,6 @@
         const cOpt = { responsive:true, maintainAspectRatio:false };
         const tChart = new Chart(document.getElementById('tempChart'),{type:'line',data:{labels:[],datasets:[{label:'Temp. (°C)',data:[],borderColor:'#e74c3c',fill:true,backgroundColor:'rgba(231,76,60,0.1)',tension:0.4}]},options:cOpt});
         const eChart = new Chart(document.getElementById('eggChart'),{type:'bar',data:{labels:[],datasets:[{label:'Œufs',data:[],backgroundColor:'#f1c40f'}]},options:{...cOpt,scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}});
-        
-        // CORRECTION : J'ai remis la courbe "Poids" dans le graphique
         const lChart = new Chart(document.getElementById('levelChart'),{type:'line',data:{labels:[],datasets:[{label:'Eau %',data:[],borderColor:'#3498db'},{label:'Poids (kg)',data:[],borderColor:'#8e44ad'}]},options:cOpt});
 
         function saveDashboardData() {
@@ -239,15 +247,19 @@
                 const h = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
                 lastMsg = Date.now(); updateStatus(true);
 
-                if(t.includes("temperature")) { document.getElementById("temp").innerText=p; upC(tChart,h,parseFloat(p.replace(/[^\d.-]/g,''))); }
-                if(t.includes("humidite")) document.getElementById("hum").innerText=p;
-                if(t.includes("luminosite")) document.getElementById("lux").innerText=p;
-                if(t.includes("nboeufs")) { document.getElementById("oeufs").innerText=p; upC(eChart,h,parseInt(p)); }
+                if(t.includes("temperature")) { document.getElementById("temp").innerText = p + " °C"; upC(tChart,h,parseFloat(p)); }
+                if(t.includes("humidite")) document.getElementById("hum").innerText = p + " %";
+                if(t.includes("luminosite")) document.getElementById("lux").innerText = p + " %";
+                if(t.includes("nboeufs")) { document.getElementById("oeufs").innerText = p; upC(eChart,h,parseInt(p)); }
                 
-                // Réception du poids pour la jauge et la courbe 1
-                if(t.includes("poidsnourriture")) { document.getElementById("poids").innerText=p; upC(lChart,h,parseFloat(p.replace(/[^\d.-]/g,'')),1); }
-                // Réception de l'eau pour la jauge et la courbe 0
-                if(t.includes("niveaueau")) { const v=parseInt(p); document.getElementById("val-eau").innerText=v+"%"; document.getElementById("fill-eau").style.width=v+"%"; upC(lChart,h,v,0); if(v<10) alertModal("EAU BASSE", v+"% restants !"); }
+                if(t.includes("poidsnourriture")) { document.getElementById("poids").innerText = p + " kg"; upC(lChart,h,parseFloat(p),1); }
+                if(t.includes("niveaueau")) { 
+                    const v = parseInt(p); 
+                    document.getElementById("val-eau").innerText = v + " %"; 
+                    document.getElementById("fill-eau").style.width = v + "%"; 
+                    upC(lChart,h,v,0); 
+                    if(v < 10) alertModal("EAU BASSE", v + "% restants !"); 
+                }
 
                 if(t.includes("porte")) { 
                     const el = document.getElementById("etat-porte"); 
@@ -267,20 +279,23 @@
             
             client.connect({ onSuccess:()=>{
                 updateStatus(true); 
-                client.subscribe(rootTopic+"#");
+                client.subscribe(subscribeTopic);
                 
-                // AMÉLIORATION : Renvoi de la config sauvegardée lors de la connexion
                 const savedMode = localStorage.getItem('userMode');
                 if(savedMode) {
                     sendCommand("Config/Mode", savedMode);
                     sendCommand("Config/HeureOuv", localStorage.getItem('userOpen') || "08:00");
                     sendCommand("Config/HeureFerm", localStorage.getItem('userClose') || "20:00");
                 }
+                
+                sendCommand("Config/HeureEau", localStorage.getItem('userEau') || "09:00");
+                sendCommand("Config/HeureNourriture", localStorage.getItem('userNourr') || "09:05");
+                
             }, useSSL:true });
         }
 
         function sendCommand(t, m) { 
-            if(client && client.isConnected()){ let msg = new Paho.MQTT.Message(m); msg.destinationName = rootTopic + t; client.send(msg); } 
+            if(client && client.isConnected()){ let msg = new Paho.MQTT.Message(m); msg.destinationName = cmdTopic + t; client.send(msg); } 
             else { console.log("Attente MQTT pour : " + m); }
         }
 
@@ -293,6 +308,10 @@
             const savedMode = localStorage.getItem('userMode'); if(savedMode) document.getElementById('input-mode').value = savedMode;
             const savedOpen = localStorage.getItem('userOpen'); if(savedOpen) document.getElementById('input-open-time').value = savedOpen;
             const savedClose = localStorage.getItem('userClose'); if(savedClose) document.getElementById('input-close-time').value = savedClose;
+            
+            const savedEau = localStorage.getItem('userEau'); if(savedEau) document.getElementById('input-eau-time').value = savedEau;
+            const savedNourr = localStorage.getItem('userNourr'); if(savedNourr) document.getElementById('input-nourr-time').value = savedNourr;
+            
             initWeather();
         }
 
@@ -300,13 +319,24 @@
             const newName = document.getElementById('input-name').value; if(newName) { localStorage.setItem('appName', newName); document.getElementById('app-title').innerText = newName; }
             const lat = document.getElementById('input-lat').value; const lon = document.getElementById('input-lon').value;
             const mode = document.getElementById('input-mode').value; const openT = document.getElementById('input-open-time').value; const closeT = document.getElementById('input-close-time').value;
+            
+            const eauT = document.getElementById('input-eau-time').value; 
+            const nourrT = document.getElementById('input-nourr-time').value;
 
             if(lat) { localStorage.setItem('userLat', lat); userLat = lat; }
             if(lon) { localStorage.setItem('userLon', lon); userLon = lon; }
             localStorage.setItem('userMode', mode); localStorage.setItem('userOpen', openT); localStorage.setItem('userClose', closeT);
+            
+            localStorage.setItem('userEau', eauT); localStorage.setItem('userNourr', nourrT);
 
             initWeather();
-            sendCommand("Config/Mode", mode); sendCommand("Config/HeureOuv", openT); sendCommand("Config/HeureFerm", closeT);
+            
+            sendCommand("Config/Mode", mode); 
+            sendCommand("Config/HeureOuv", openT); 
+            sendCommand("Config/HeureFerm", closeT);
+            sendCommand("Config/HeureEau", eauT); 
+            sendCommand("Config/HeureNourriture", nourrT);
+            
             alert("Paramètres sauvegardés avec succès !");
         }
 
@@ -324,7 +354,7 @@
         function alertModal(t, m) { document.getElementById("modal-title").innerText=t; document.getElementById("modal-msg").innerText=m; document.getElementById("modal-alerte").style.display="block"; }
         function closeModal() { if (document.getElementById("modal-title").innerText === "BLOCAGE") { sendCommand('oeufs/reset', '1'); } document.getElementById("modal-alerte").style.display="none"; }
         
-        function upC(c,l,d,i=0) { c.data.labels.push(l); c.data.datasets[i].data.push(d); if(c.data.labels.length>50){c.data.labels.shift();c.data.datasets[i].data.shift();} c.update(); }
+        function upC(c,l,d,i=0) { c.data.labels.push(l); c.data.datasets[i].data.push(d); if(c.data.labels.length>300){c.data.labels.shift();c.data.datasets[i].data.shift();} c.update(); }
         function updateStatus(o) { document.getElementById('pico-status').innerText=o?"En ligne":"Hors ligne"; document.getElementById('pico-status').style.color=o?"green":"red"; }
         function exportToCSV() { let c="Heure,Topic,Valeur\n"; history.forEach(r=>c+=`${r.h},${r.t},${r.p}\n`); const b=new Blob([c],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='data.csv'; a.click(); }
 
