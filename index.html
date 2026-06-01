@@ -116,16 +116,16 @@
                 <div id="etat-porte" class="status-box">--</div>
             </div>
             <div class="btn-group">
-                <button class="btn btn-open" onclick="sendCommand('porte/commande', 'open')">OUVRIR</button>
-                <button class="btn btn-close" onclick="sendCommand('porte/commande', 'close')">FERMER</button>
+                <button class="btn btn-open" onclick="sendCommand('porte/commande', 'open', this)">OUVRIR</button>
+                <button class="btn btn-close" onclick="sendCommand('porte/commande', 'close', this)">FERMER</button>
             </div>
             <hr style="border: 0; border-top: 1px solid #eee; margin: 25px 0;">
             <div class="section-header">
                 <h3><i class="fas fa-broom"></i> Maintenance</h3>
                 <div id="etat-racleur" class="status-box">--</div>
             </div>
-            <button class="btn btn-clean" onclick="sendCommand('racleur/commande', 'open')">LANCER LE RACLEUR</button>
-            <button class="btn" style="background-color: var(--warning); margin-top: 15px;" onclick="sendCommand('oeufs/reset', '1')">🥚 RÉINITIALISER LE COMPTEUR</button>
+            <button class="btn btn-clean" onclick="sendCommand('racleur/commande', 'open', this)">LANCER LE RACLEUR</button>
+            <button class="btn" style="background-color: var(--warning); margin-top: 15px;" onclick="sendCommand('oeufs/reset', '1', this)">🥚 RÉINITIALISER LE COMPTEUR</button>
             <button class="btn btn-export" onclick="exportToCSV()">💾 EXPORTER (CSV)</button>
         </div>
     </div>
@@ -161,7 +161,7 @@
             <div class="form-row"><label>Heure de distribution de nourriture :</label><input type="time" id="input-nourr-time" class="form-input" value="09:05"></div>
         </div>
 
-        <button class="btn btn-save" onclick="saveSettings()">💾 SAUVEGARDER & ENVOYER</button>
+        <button class="btn btn-save" onclick="saveSettings(this)">💾 SAUVEGARDER & ENVOYER</button>
     </div>
 
     <div class="bottom-nav">
@@ -230,8 +230,7 @@
                 if (data.charts) {
                     tChart.data.labels = data.charts.temp.labels || []; tChart.data.datasets[0].data = data.charts.temp.data || []; tChart.update();
                     eChart.data.labels = data.charts.egg.labels || []; eChart.data.datasets[0].data = data.charts.egg.data || []; eChart.update();
-                    lChart.data.labels = data.charts.level.labels || [];
-                    lChart.data.datasets[0].data = data.charts.level.eau || [];
+                    lChart.data.labels = data.charts.level.labels || []; lChart.data.datasets[0].data = data.charts.level.eau || [];
                     if(data.charts.level.poids) lChart.data.datasets[1].data = data.charts.level.poids || [];
                     lChart.update();
                 }
@@ -253,12 +252,17 @@
                 if(t.includes("nboeufs")) { document.getElementById("oeufs").innerText = p; upC(eChart,h,parseInt(p)); }
                 
                 if(t.includes("poidsnourriture")) { document.getElementById("poids").innerText = p + " kg"; upC(lChart,h,parseFloat(p),1); }
+                if(t.includes("niveaunourriture")) {
+                    const v = parseInt(p);
+                    if(v <= 20) alertModal("🌾 NOURRITURE BASSE", "Attention, il ne reste que " + v + "% de grain !");
+                }
+
                 if(t.includes("niveaueau")) { 
                     const v = parseInt(p); 
                     document.getElementById("val-eau").innerText = v + " %"; 
                     document.getElementById("fill-eau").style.width = v + "%"; 
                     upC(lChart,h,v,0); 
-                    if(v < 10) alertModal("EAU BASSE", v + "% restants !"); 
+                    if(v <= 20) alertModal("💧 EAU BASSE", "Attention, il ne reste que " + v + "% d'eau !"); 
                 }
 
                 if(t.includes("porte")) { 
@@ -294,9 +298,26 @@
             }, useSSL:true });
         }
 
-        function sendCommand(t, m) { 
-            if(client && client.isConnected()){ let msg = new Paho.MQTT.Message(m); msg.destinationName = cmdTopic + t; client.send(msg); } 
-            else { console.log("Attente MQTT pour : " + m); }
+        // Ajout de l'effet Anti-Spam sur les boutons
+        function sendCommand(t, m, btnElement = null) { 
+            if(client && client.isConnected()){ 
+                let msg = new Paho.MQTT.Message(m); 
+                msg.destinationName = cmdTopic + t; 
+                client.send(msg); 
+                
+                if(btnElement) {
+                    let originalText = btnElement.innerText;
+                    btnElement.innerText = "ENVOYÉ ✓";
+                    btnElement.disabled = true;
+                    btnElement.style.opacity = "0.5";
+                    setTimeout(() => {
+                        btnElement.innerText = originalText;
+                        btnElement.disabled = false;
+                        btnElement.style.opacity = "1";
+                    }, 2000);
+                }
+            } 
+            else { alertModal("Erreur", "Non connecté au poulailler !"); }
         }
 
         function loadSettings() {
@@ -315,18 +336,15 @@
             initWeather();
         }
 
-        function saveSettings() {
+        function saveSettings(btnElement) {
             const newName = document.getElementById('input-name').value; if(newName) { localStorage.setItem('appName', newName); document.getElementById('app-title').innerText = newName; }
             const lat = document.getElementById('input-lat').value; const lon = document.getElementById('input-lon').value;
             const mode = document.getElementById('input-mode').value; const openT = document.getElementById('input-open-time').value; const closeT = document.getElementById('input-close-time').value;
-            
-            const eauT = document.getElementById('input-eau-time').value; 
-            const nourrT = document.getElementById('input-nourr-time').value;
+            const eauT = document.getElementById('input-eau-time').value; const nourrT = document.getElementById('input-nourr-time').value;
 
             if(lat) { localStorage.setItem('userLat', lat); userLat = lat; }
             if(lon) { localStorage.setItem('userLon', lon); userLon = lon; }
             localStorage.setItem('userMode', mode); localStorage.setItem('userOpen', openT); localStorage.setItem('userClose', closeT);
-            
             localStorage.setItem('userEau', eauT); localStorage.setItem('userNourr', nourrT);
 
             initWeather();
@@ -337,7 +355,11 @@
             sendCommand("Config/HeureEau", eauT); 
             sendCommand("Config/HeureNourriture", nourrT);
             
-            alert("Paramètres sauvegardés avec succès !");
+            if(btnElement) {
+                let originalText = btnElement.innerText;
+                btnElement.innerText = "SAUVEGARDÉ ✓";
+                setTimeout(() => { btnElement.innerText = originalText; }, 2000);
+            }
         }
 
         function getMyGPS() {
@@ -354,6 +376,7 @@
         function alertModal(t, m) { document.getElementById("modal-title").innerText=t; document.getElementById("modal-msg").innerText=m; document.getElementById("modal-alerte").style.display="block"; }
         function closeModal() { if (document.getElementById("modal-title").innerText === "BLOCAGE") { sendCommand('oeufs/reset', '1'); } document.getElementById("modal-alerte").style.display="none"; }
         
+        // Optimisation : Historique graphique étendu à 300 points
         function upC(c,l,d,i=0) { c.data.labels.push(l); c.data.datasets[i].data.push(d); if(c.data.labels.length>300){c.data.labels.shift();c.data.datasets[i].data.shift();} c.update(); }
         function updateStatus(o) { document.getElementById('pico-status').innerText=o?"En ligne":"Hors ligne"; document.getElementById('pico-status').style.color=o?"green":"red"; }
         function exportToCSV() { let c="Heure,Topic,Valeur\n"; history.forEach(r=>c+=`${r.h},${r.t},${r.p}\n`); const b=new Blob([c],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='data.csv'; a.click(); }
