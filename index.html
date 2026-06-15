@@ -95,7 +95,13 @@
             <div class="card"><div class="card-icon">💧</div><h3>Humidité</h3><p id="hum">-- %</p></div>
             <div class="card"><div class="card-icon">☀️</div><h3>Luminosité</h3><p id="lux">-- %</p></div>
             <div class="card"><div class="card-icon">🥚</div><h3>Œufs</h3><p id="oeufs">0</p></div>
-            <div class="card"><div class="card-icon">⚖️</div><h3>Mangeoire</h3><p id="poids">-- kg</p></div>
+            
+            <div class="card">
+                <div class="card-icon">🌾</div>
+                <h3>Mangeoire</h3><p id="poids">-- %</p>
+                <div class="level-bar"><div id="fill-nourriture" class="level-fill" style="background: var(--warning);"></div></div>
+            </div>
+            
             <div class="card">
                 <h3>Eau</h3><p id="val-eau">-- %</p>
                 <div class="level-bar"><div id="fill-eau" class="level-fill" style="background: var(--info);"></div></div>
@@ -190,7 +196,7 @@
         const cOpt = { responsive:true, maintainAspectRatio:false };
         const tChart = new Chart(document.getElementById('tempChart'),{type:'line',data:{labels:[],datasets:[{label:'Temp. (°C)',data:[],borderColor:'#e74c3c',fill:true,backgroundColor:'rgba(231,76,60,0.1)',tension:0.4}]},options:cOpt});
         const eChart = new Chart(document.getElementById('eggChart'),{type:'bar',data:{labels:[],datasets:[{label:'Œufs',data:[],backgroundColor:'#f1c40f'}]},options:{...cOpt,scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}});
-        const lChart = new Chart(document.getElementById('levelChart'),{type:'line',data:{labels:[],datasets:[{label:'Eau %',data:[],borderColor:'#3498db'},{label:'Poids (kg)',data:[],borderColor:'#8e44ad'}]},options:cOpt});
+        const lChart = new Chart(document.getElementById('levelChart'),{type:'line',data:{labels:[],datasets:[{label:'Eau %',data:[],borderColor:'#3498db'},{label:'Nourriture %',data:[],borderColor:'#8e44ad'}]},options:cOpt});
 
         function saveDashboardData() {
             const dataToSave = {
@@ -199,7 +205,9 @@
                     temp: document.getElementById("temp").innerText, hum: document.getElementById("hum").innerText,
                     lux: document.getElementById("lux").innerText, oeufs: document.getElementById("oeufs").innerText,
                     poids: document.getElementById("poids").innerText, eau: document.getElementById("val-eau").innerText,
-                    eauFill: document.getElementById("fill-eau").style.width, porteText: document.getElementById("etat-porte").innerText,
+                    eauFill: document.getElementById("fill-eau").style.width,
+                    nourrFill: document.getElementById("fill-nourriture").style.width,
+                    porteText: document.getElementById("etat-porte").innerText,
                     porteColor: document.getElementById("etat-porte").style.color, racleurText: document.getElementById("etat-racleur").innerText,
                     racleurColor: document.getElementById("etat-racleur").style.color
                 },
@@ -223,6 +231,7 @@
                     document.getElementById("temp").innerText = data.ui.temp; document.getElementById("hum").innerText = data.ui.hum;
                     document.getElementById("lux").innerText = data.ui.lux; document.getElementById("oeufs").innerText = data.ui.oeufs;
                     if(data.ui.poids) document.getElementById("poids").innerText = data.ui.poids;
+                    if(data.ui.nourrFill) document.getElementById("fill-nourriture").style.width = data.ui.nourrFill;
                     document.getElementById("val-eau").innerText = data.ui.eau; document.getElementById("fill-eau").style.width = data.ui.eauFill;
                     document.getElementById("etat-porte").innerText = data.ui.porteText; document.getElementById("etat-porte").style.color = data.ui.porteColor;
                     document.getElementById("etat-racleur").innerText = data.ui.racleurText; document.getElementById("etat-racleur").style.color = data.ui.racleurColor;
@@ -251,9 +260,11 @@
                 if(t.includes("luminosite")) document.getElementById("lux").innerText = p + " %";
                 if(t.includes("nboeufs")) { document.getElementById("oeufs").innerText = p; upC(eChart,h,parseInt(p)); }
                 
-                if(t.includes("niveaunourriture")) { document.getElementById("poids").innerText = p + " kg"; upC(lChart,h,parseFloat(p),1); }
-                if(t.includes("niveaunourriture")) {
+                if(t.includes("niveaunourriture")) { 
                     const v = parseInt(p);
+                    document.getElementById("poids").innerText = v + " %"; 
+                    document.getElementById("fill-nourriture").style.width = v + "%";
+                    upC(lChart,h,v,1); 
                     if(v <= 20) alertModal("🌾 NOURRITURE BASSE", "Attention, il ne reste que " + v + "% de grain !");
                 }
 
